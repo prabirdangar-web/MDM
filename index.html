@@ -58,6 +58,11 @@ body{padding-bottom:64px}
 .mini{font-size:12px;color:#444;margin-top:6px;display:flex;flex-wrap:wrap;gap:4px 12px}
 @media(max-width:700px){nav{flex-wrap:nowrap;overflow-x:auto}nav button{white-space:nowrap;flex:none}.pg{padding:8px}}
 @media print{#login,#sbar,#p_m{display:none!important}body{padding-bottom:0}}
+
+@media print{#p_k.on{justify-content:flex-start!important;overflow:visible!important;height:auto!important;min-height:0}
+#p_k td,#p_k th{font-size:9pt!important;padding:2px 5px!important}
+#p_k .ksig{margin-top:16mm!important;display:grid!important;grid-template-columns:1fr 1fr 1fr;gap:6mm;page-break-inside:avoid;font-size:9pt}
+#p_k .ksig span{border-top:1px solid #000;padding-top:3px;display:block}}
 </style></head><body>
 <div id="login"><form onsubmit="doLogin(event)"><h2>TFHS Mid Day Meal</h2><p>Sign in with your portal account (same login as the XI Exam portal).</p>
 <input id="le" type="email" placeholder="Email" autocomplete="username" required><input id="lp" type="password" placeholder="Password" autocomplete="current-password" required>
@@ -147,7 +152,7 @@ function draw(){drawM();const C=calc(),L=checks(C),c=S.cfg;
  ${nm.map(x=>ex(x[1],x[2],kv[x[0]][0],x[3],kv[x[0]][1])).join("")}${ex("জ্বালানি বাবদ","Fuel",C.fuel[0],"কেজি (KG)",C.fuel[1])}${ex("অন্যান্য [মাংস]/Utensil etc","Others [Chicken+soap etc]",kv.oth[0],"কেজি (KG)",kv.oth[1])}${ex("রান্নার মজুরী বাবদ","Cooking Cost","","",hon)}
  <tr class="tot"><td class="t">মোট ব্যয় <small>(Total Expenditure)</small></td><td></td><td></td><td class="n">${f0(C.kTot)}</td><td class="c">টাকা (Rs.)</td></tr><tr class="tot"><td class="t"><small>(Round Off)</small></td><td></td><td></td><td class="n">${f0(Math.round(C.kTot))}</td><td class="c">টাকা (Rs.)</td></tr></table>
  <div style="max-width:900px;margin:10px auto">অতএব, মহাশয় উপরোক্ত ব্যয় বাবদ মোট ${Math.round(C.kTot)} টাকা যত শীঘ্র সম্ভব আমার দলের একাউন্টে দিয়ে বাধিত করবেন<br><small>(You are therefore requested to please remit the aforesaid amount of Rs.${Math.round(C.kTot)} [Rupees ${words(C.kTot)} Only] as early as possible and obliged)</small></div>
- <div style="max-width:900px;margin:40px auto 0;display:flex;justify-content:space-between;text-align:center"><span>অভিভাবকের স্বাক্ষর<br><small>(Guardian Signature)</small></span><span>প্রধান শিক্ষক/শিক্ষিকার শীলসহ স্বাক্ষর<br><small>(Signature and Seal of Headmaster/Headmistress)</small></span><span>দলনেত্রীর শীলসহ স্বাক্ষর<br><small>(SHG Leader Signature &amp; Seal)</small></span></div>`;$("p_k").innerHTML=K;
+ <div class="ksig" style="max-width:900px;margin:40px auto 0;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center"><span>অভিভাবকের স্বাক্ষর<br><small>(Guardian Signature)</small></span><span>প্রধান শিক্ষক/শিক্ষিকার শীলসহ স্বাক্ষর<br><small>(Signature and Seal of Headmaster/Headmistress)</small></span><span>দলনেত্রীর শীলসহ স্বাক্ষর<br><small>(SHG Leader Signature &amp; Seal)</small></span></div>`;$("p_k").innerHTML=K;
 
  // FORM C
  const cl=["Class I/V","Class II/VI","Class III/VII","Class IV/VIII"],en=S.enrol,et=j=>en.reduce((a,r)=>a+(+r[j]||0),0);
