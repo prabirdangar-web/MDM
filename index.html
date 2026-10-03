@@ -64,6 +64,16 @@ body{padding-bottom:64px}
 #p_k .ksig{margin-top:16mm!important;display:grid!important;grid-template-columns:1fr 1fr 1fr;gap:6mm;page-break-inside:avoid;font-size:9pt}
 #p_k .ksig span{border-top:1px solid #000;padding-top:3px;display:block}}
 @media print{#p_p2.on>table:only-of-type{flex:none!important}#p_p2 input{text-align:right}#p_p2 input.tx{text-align:left}}
+
+.dwrap{overflow-x:auto;background:#fff;border:1px solid #bbb;border-radius:8px;margin-bottom:6px}
+table.dt{table-layout:auto;width:max-content;min-width:100%}
+table.dt th,table.dt td{padding:2px 3px;height:34px;white-space:nowrap;text-align:center;border:1px solid #ccc}
+table.dt input{width:52px;padding:6px 3px;font-size:15px;text-align:right;border:1px solid #aaa;border-radius:4px}
+table.dt input.ex{width:66px}table.dt input.mn{width:150px;text-align:left}
+table.dt .sc{position:sticky;left:0;background:#e8eef5;z-index:2;text-align:left;min-width:62px;border-right:2px solid #888}
+table.dt tr.bd td{background:#fdecea}table.dt tr.bd td.sc{background:#f7d4d0}table.dt tr.hl td{background:#fff3d6;font-weight:600}table.dt tr.hl td.sc{background:#fbe5ad}
+table.dt thead th{position:sticky;top:0;background:#e8eef5;z-index:1}table.dt thead th.sc{z-index:3}
+table.dt .ac{white-space:nowrap}table.dt .ac .mb{padding:6px 8px;margin:0 1px}table.dt .at{font-variant-numeric:tabular-nums;min-width:44px}
 </style></head><body>
 <div id="login"><form onsubmit="doLogin(event)"><h2>TFHS Mid Day Meal</h2><p>Sign in with your portal account (same login as the XI Exam portal).</p>
 <input id="le" type="email" placeholder="Email" autocomplete="username" required><input id="lp" type="password" placeholder="Password" autocomplete="current-password" required>
@@ -328,16 +338,13 @@ function drawM(){
  <div class="mini"><span>Mudi (Kha) ${f2(C.grocM)}</span><span>SABJI+Chicken ${f2(C.sabM)}</span></div>
  ${S.pay.oth.map((x,i)=>`<div class="g2" style="margin-top:6px"><label>Name<input class="tx" style="text-align:left" value="${esc(x.l)}" onchange="setPyO(${i},'l',this.value)"></label><label>₹ <button class="mb o" style="float:right;padding:2px 8px" onclick="delPyO(${i})">✕</button>${mi(x.a||0,`setPyO(${i},'a',this.value)`)}</label></div>`).join("")}
  <button class="mb" style="margin-top:8px" onclick="addPyO()">+ Add payment line</button><div class="mini"><span>Total paid ${f2(Y.pt)}</span><span>Claimed ${f0(Y.cm)}</span></div></details>`;
- C.D.forEach((o,i)=>{const d=S.days[i],wd=new Date(d.date+"T00:00:00").toLocaleDateString("en-GB",{weekday:"short"}),day=d.date.slice(8);
-  if(o.hol){h+=`<div class="mcard hol"><h4><span>${day} ${wd} – ${isSun(d.date)?"Sunday":"Holiday"}</span><button class="mb o" onclick="togHol(${i})">Mark working</button></h4></div>`;return}
-  const bad=!o.ok;
-  h+=`<div class="mcard ${bad?"bad":""}"><h4><span>${day} ${wd}</span><span><button class="mb o" onclick="cpToMt(${i})">MDM = Present</button> <button class="mb o" onclick="togHol(${i})">Holiday</button></span></h4>
-  <small>Present (V · VI · VII · VIII) – auto = taken + diff%</small><div class="g4">${[0,1,2,3].map(j=>mi(d.cp[j],`setCl(${i},'cp',${j},this.value)`)).join("")}</div>
-  <small>MDM taken (V · VI · VII · VIII)</small><div class="g4">${[0,1,2,3].map(j=>mi(d.mt[j],`setCl(${i},'mt',${j},this.value)`)).join("")}</div>
-  <div class="g2" style="margin-top:6px"><label>MDM taken % of enrolment${mi(d.pct||"",`fillPct(${i},this.value)`)}</label><label>Total expenditure ₹${mi(d.exp,`setD(${i},'exp',this.value)`)}</label></div><label style="margin-top:6px;display:flex;flex-direction:column;font-size:11px">Menu<input class="tx" type="text" value="${String(d.menu||"").replace(/"/g,"&quot;")}" onchange="setD(${i},'menu',this.value)"></label>
-  <div class="mini"><span>Rice used ${f2(o.rT)}</span><span>Rice CB ${f2(o.cb)}</span><span>₹ CB ${f2(o.rcb)}</span><span>Att ${o.att.toFixed(1)}%</span></div>
-  ${bad?`<div class="mini"><span class="bad">Material ${f0(o.mat)} ≠ Exp ${f0(o.exp)}</span><button class="mb" onclick="sug(${i})">Auto-split materials</button></div>`:""}</div>`});
- el.innerHTML=h+`<div id="sst"></div></div>`;uiStatus()}
+ const ci=(v,fn,cls)=>`<input type="number" inputmode="decimal" step="any" class="${cls||""}" value="${v}" onfocus="this.select()" onchange="${fn}">`;
+ let t=`<div class="mh" style="max-width:1100px"><div class="dwrap"><table class="dt"><thead><tr><th class="sc" rowspan="2">Date</th><th rowspan="2">MDM<br>%</th><th colspan="4">Present</th><th colspan="4">MDM taken</th><th rowspan="2">Exp ₹</th><th rowspan="2">Att%</th><th rowspan="2">Menu</th><th rowspan="2"></th></tr><tr><th>V</th><th>VI</th><th>VII</th><th>VIII</th><th>V</th><th>VI</th><th>VII</th><th>VIII</th></tr></thead><tbody>`;
+ C.D.forEach((o,i)=>{const d=S.days[i],wd=new Date(d.date+"T00:00:00").toLocaleDateString("en-GB",{weekday:"short"}),day=d.date.slice(8),dc=`<td class="sc"><b>${day}</b> ${wd}</td>`;
+  if(o.hol){t+=`<tr class="hl">${dc}<td colspan="12" style="text-align:left">${isSun(d.date)?"Sunday":(d.why||"Holiday")}</td><td><button class="mb o" onclick="togHol(${i})">Work</button></td></tr>`;return}
+  t+=`<tr class="${o.ok?"":"bd"}">${dc}<td>${ci(d.pct||"",`fillPct(${i},this.value)`)}</td>${[0,1,2,3].map(j=>`<td>${ci(d.cp[j],`setCl(${i},'cp',${j},this.value)`)}</td>`).join("")}${[0,1,2,3].map(j=>`<td>${ci(d.mt[j],`setCl(${i},'mt',${j},this.value)`)}</td>`).join("")}<td>${ci(d.exp,`setD(${i},'exp',this.value)`,"ex")}</td><td class="at">${o.att.toFixed(1)}</td><td><input class="tx mn" type="text" value="${esc(d.menu)}" onchange="setD(${i},'menu',this.value)"></td><td class="ac"><button class="mb o" title="MDM taken = Present" onclick="cpToMt(${i})">=P</button><button class="mb o" title="Mark holiday" onclick="togHol(${i})">H</button>${o.ok?"":`<button class="mb" title="Material ${f0(o.mat)} ≠ Exp ${f0(o.exp)} – auto-split" onclick="sug(${i})">⚖</button>`}</td></tr>`});
+ t+=`</tbody></table></div><small>One line per date. Present = taken + diff% when you enter MDM %. <b>=P</b> copies Present to MDM taken, <b>H</b> marks holiday, <b>⚖</b> auto-splits materials when they don't match the day's expense.</small></div>`;
+ el.innerHTML=h+`<div id="sst"></div></div>`+t;uiStatus()}
 
 showLogin();
 tab("m");
