@@ -74,6 +74,47 @@ table.dt .sc{position:sticky;left:0;background:#e8eef5;z-index:2;text-align:left
 table.dt tr.bd td{background:#fdecea}table.dt tr.bd td.sc{background:#f7d4d0}table.dt tr.hl td{background:#fff3d6;font-weight:600}table.dt tr.hl td.sc{background:#fbe5ad}
 table.dt thead th{position:sticky;top:0;background:#e8eef5;z-index:1}table.dt thead th.sc{z-index:3}
 table.dt .ac{white-space:nowrap}table.dt .ac .mb{padding:6px 8px;margin:0 1px}table.dt .at{font-variant-numeric:tabular-nums;min-width:44px}
+.enr th,.enr td{font-size:13px;font-weight:700;text-align:center}.enr td.t{text-align:left}.enr input{text-align:center;font-weight:700;background:transparent;border:0;font-size:13px}.mbig{font-size:24px;font-weight:700}.mst th{font-weight:700;font-size:14px;border:1px solid #444}
+@media print{#p_c .enr td,#p_c .enr th{font-size:10.5pt!important;padding:2px!important}#p_c .enr th{font-size:9pt!important}#p_c .enr input{font-size:10.5pt!important}#p_c .srv td,#p_c .srv th{font-size:7.5pt!important}#p_mdcf .mfx{font-size:9pt}#p_mdcf .mst{flex:none!important}#p_mdcf td.mbig{font-size:15pt!important}#p_mdcf .mst th{font-size:9.5pt!important}}
+
+:root{--side:232px}
+body{background:#eef2f7}
+.pg{padding:14px}
+.ent{max-width:1320px;margin:auto}
+.ent-top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.ent-t{font-size:24px;font-weight:700;color:var(--b)}.ent-s{color:#5a6b7d;font-size:13px;margin-top:2px}
+.ent-r{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.pill{padding:8px 14px;border-radius:20px;font-weight:700;font-size:12px}.pill.ok{background:#e3f6e8;color:#1b7f3b}.pill.bad{background:#fdecea;color:#c0392b}
+.pctb{display:flex;flex-direction:column;font-size:11px;color:#555}.pctb input{width:130px;padding:8px;font-size:15px;border:1px solid #9bb;border-radius:8px;background:#fff;text-align:right}
+.ecard{background:#fff;border:1px solid #d5dde7;border-radius:14px;box-shadow:0 2px 6px #1a3a5c14;overflow:hidden;margin-bottom:14px}
+.ecard>h3{margin:0;padding:12px 16px;font-size:15px;background:linear-gradient(90deg,#f3f6fa,#e8eef5);border-bottom:1px solid #dbe3ec;color:var(--b)}.ecard>h3 small{font-weight:400;color:#6b7b8c}
+.ent-leg{padding:10px 16px;font-size:12px;color:#5a6b7d;border-top:1px solid #e1e8f0;background:#fafcfe}
+.ent-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px;align-items:start}
+.ent-grid .mh details{border-radius:14px;box-shadow:0 2px 6px #1a3a5c14;border-color:#d5dde7}
+table.dt thead th{background:linear-gradient(#e8eef5,#dbe5f0);color:var(--b)}
+table.dt tbody tr:not(.bd):not(.hl):nth-child(even) td:not(.sc){background:#f9fbfe}
+table.dt tr.today td{box-shadow:inset 0 2px 0 #2d5a88,inset 0 -2px 0 #2d5a88}
+table.dt tfoot td{background:#e8eef5;font-weight:700;position:sticky;bottom:0}
+.snapt{font-weight:700;color:var(--b);margin:6px 0}
+.snap{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.snap .chip{border-radius:12px;box-shadow:0 1px 3px #1a3a5c12}
+.snap .chip b{font-size:18px}.snap .chip b.ok{color:var(--g)}.snap .chip b.bad{color:var(--r)}
+nav .brand{display:none}#navsum{display:none}
+@media(min-width:900px){
+ body{padding-left:var(--side)}.pg{padding:20px 26px}
+ nav{position:fixed;left:0;top:0;bottom:0;width:var(--side);flex-direction:column;flex-wrap:nowrap;overflow-y:auto;padding:16px 10px;background:linear-gradient(180deg,#12294a,#1a3a5c 60%,#22507f);gap:3px;z-index:20}
+ nav .brand{display:flex;flex-direction:column;padding:4px 10px 14px;color:#fff;border-bottom:1px solid #ffffff2a;margin-bottom:8px}
+ nav .brand b{font-size:22px;letter-spacing:1px}nav .brand small{color:#a9c4de;font-size:12px}
+ nav button{text-align:left;background:transparent;color:#d6e4f3;padding:10px 12px;border-radius:9px;font-size:14px}
+ nav button:hover{background:#ffffff1c}nav button.on{background:#fff;color:var(--b);font-weight:700}
+ nav button.act{border:1px solid #ffffff33;margin-top:4px;text-align:center}
+ #navsum{display:block;background:#ffffff14;border-radius:12px;padding:10px 12px;color:#e8f1fa;margin:10px 0 6px;font-size:12px}
+ #navsum .ns-h{font-weight:700;margin-bottom:6px;font-size:13px}#navsum .ns-r{display:flex;justify-content:space-between;padding:2px 0}
+ #navsum .gk{color:#7fe3a0}#navsum .rk{color:#ff9d92}
+ #navsum .ns-st{margin-top:6px;text-align:center;border-radius:8px;padding:4px;font-weight:700}.ns-st.ok{background:#1b7f3b55}.ns-st.bad{background:#c0392b66}
+ #sbar{left:var(--side)}
+}
+@media print{body{padding-left:0!important}}
 </style></head><body>
 <div id="login"><form onsubmit="doLogin(event)"><h2>TFHS Mid Day Meal</h2><p>Sign in with your portal account (same login as the XI Exam portal).</p>
 <input id="le" type="email" placeholder="Email" autocomplete="username" required><input id="lp" type="password" placeholder="Password" autocomplete="current-password" required>
@@ -211,33 +252,37 @@ function draw(){drawM();const C=calc(),L=checks(C),c=S.cfg;
  <div class="ksig" style="max-width:900px;margin:40px auto 0;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center"><span>অভিভাবকের স্বাক্ষর<br><small>(Guardian Signature)</small></span><span>প্রধান শিক্ষক/শিক্ষিকার শীলসহ স্বাক্ষর<br><small>(Signature and Seal of Headmaster/Headmistress)</small></span><span>দলনেত্রীর শীলসহ স্বাক্ষর<br><small>(SHG Leader Signature &amp; Seal)</small></span></div>`;$("p_k").innerHTML=K;
 
  // FORM C
- const cl=["Class I/V","Class II/VI","Class III/VII","Class IV/VIII"],en=S.enrol,et=j=>en.reduce((a,r)=>a+(+r[j]||0),0);
- let Fc=H("Form-C  Monthly Coverage Report of Cooked Mid-Day-Meal Programme")+`<div class="card" style="font-weight:600">Name of the School: ${c.school} &nbsp;&nbsp; DISE CODE: ${[...c.dise].map(x=>`<span style="display:inline-block;width:20px;border:1px solid #000;text-align:center">${x}</span>`).join("")}</div>
- <table style="max-width:1000px;margin-bottom:10px"><tr><th rowspan="2" style="width:110px">Class</th><th colspan="6">Boys</th><th colspan="6">Girls</th><th rowspan="2">Total Student</th></tr><tr>${["ST","SC","OBC","Min","Gen","Tot"].concat(["ST","SC","OBC","Min","Gen","Tot"]).map(x=>`<th>${x}</th>`).join("")}</tr>`;
+ const cl=["Class I/V","Class II/VI","Class III/VII","Class IV/VIII","Class V"],en=S.enrol,et=j=>en.reduce((a,r)=>a+(+r[j]||0),0),dsh=v=>v?v:"-";
  const eN=["Pre Pry","Class I / V","Class II / VI","Class III / VII","Class IV / VIII"];
- en.forEach((r,i)=>{const b=r.slice(0,5).reduce((a,x)=>a+x,0),g=r.slice(5,10).reduce((a,x)=>a+x,0);Fc+=`<tr><td class="t">${eN[i]}</td>${r.slice(0,5).map((x,j)=>`<td>${inp(x,`setE(${i},${j},this.value)`)}</td>`).join("")}<td class="n">${b}</td>${r.slice(5,10).map((x,j)=>`<td>${inp(x,`setE(${i},${j+5},this.value)`)}</td>`).join("")}<td class="n">${g}</td><td class="n">${b+g}</td></tr>`});
+ let Fc=`<div style="text-align:center;font-weight:700;line-height:1.25"><div style="font-size:19px">Cooked Mid-Day Meal Programme</div><div style="font-size:19px">School Education Department</div><div style="font-size:16px">Government of West Bengal</div><div style="font-size:25px;margin-top:2px">Mid-Day Meal Information System</div><div style="font-size:12px;margin-top:4px">MONTHLY COVERAGE REPORT OF COOKED MID-DAY-MEAL PROGRAMME (Form-C) [To be Died up in English Block Letters Only]</div></div>
+ <div style="display:flex;align-items:flex-end;margin:6px 0 4px"><div style="flex:0 0 38%;text-align:center;font-size:14px">Name of the School/SSK/Madrasa/NLCP</div><div style="flex:1;border-bottom:1px solid #000;font-size:22px;letter-spacing:1px;text-align:center">${c.school.replace(" [H.S.]","[H.S.]")}</div></div>
+ <div style="display:flex;align-items:center;gap:10px;margin:8px 0"><span style="font-size:16px">DISE CODE:</span><span style="display:inline-flex">${[...c.dise].map(x=>`<span style="display:inline-block;width:30px;height:32px;line-height:30px;border:2px solid #000;margin-right:-1px;text-align:center;font-size:24px;font-weight:700">${x}</span>`).join("")}</span></div>
+ <table class="enr" style="max-width:1000px;margin-bottom:10px"><tr><th rowspan="2" style="width:110px">Class</th><th colspan="6">Boys</th><th colspan="6">Girls</th><th rowspan="2">Total Student</th></tr><tr>${["ST","SC","OBC","Minority","Gen","Tot [Boys]","ST","SC","OBC","Minority","Gen","Tot Girls"].map(x=>`<th style="font-size:10px">${x}</th>`).join("")}</tr>`;
+ en.forEach((r,i)=>{const b=r.slice(0,5).reduce((a,x)=>a+x,0),g=r.slice(5,10).reduce((a,x)=>a+x,0);Fc+=`<tr><td class="t">${eN[i]}</td>${r.slice(0,5).map((x,j)=>`<td>${inp(x||"-",`setE(${i},${j},this.value)`)}</td>`).join("")}<td class="n">${dsh(b)}</td>${r.slice(5,10).map((x,j)=>`<td>${inp(x||"-",`setE(${i},${j+5},this.value)`)}</td>`).join("")}<td class="n">${dsh(g)}</td><td class="n">${dsh(b+g)}</td></tr>`});
  const eB=en.reduce((a,r)=>a+r.slice(0,5).reduce((x,y)=>x+y,0),0),eG=en.reduce((a,r)=>a+r.slice(5,10).reduce((x,y)=>x+y,0),0);
- Fc+=`<tr class="tot"><td class="t">Total</td>${[0,1,2,3,4].map(j=>`<td class="n">${et(j)}</td>`).join("")}<td class="n">${eB}</td>${[5,6,7,8,9].map(j=>`<td class="n">${et(j)}</td>`).join("")}<td class="n">${eG}</td><td class="n">${eB+eG}</td></tr></table>
- <table style="min-width:1150px"><colgroup><col style="width:34px"><col style="width:88px">${cl.map(_=>'<col style="width:46px"><col style="width:46px">').join("")}<col style="width:84px"><col class="noprint" style="width:60px"><col class="noprint" style="width:60px"><col class="noprint" style="width:52px"><col></colgroup>
- <tr><th rowspan="3">SL</th><th rowspan="3">CMDM Serving Date</th><th colspan="8">No. of Children Provided CMDM and Present</th><th rowspan="3">Rice Utilized (KG)</th><th rowspan="3" class="noprint">TOT P</th><th rowspan="3" class="noprint">TOT M</th><th rowspan="3" class="noprint">%Att</th><th rowspan="3">Menu</th></tr><tr>${cl.map(x=>`<th colspan="2">${x}</th>`).join("")}</tr><tr>${cl.map(_=>"<th>CP</th><th>MT</th>").join("")}</tr>`;
- let tp=0,tm=0;S.days.forEach((d,i)=>{if(d.hol)return;const o=C.D[i],z=o.pV+o.pU===0,P=d.cp.reduce((a,x)=>a+x,0),M=d.mt.reduce((a,x)=>a+x,0);tp+=P;tm+=M;
-  Fc+=`<tr><td class="c">${i+1}</td><td class="c">${dt(d.date)}</td>${[0,1,2,3].map(j=>`<td>${inp(d.cp[j],`setCl(${i},'cp',${j},this.value)`)}</td><td>${inp(d.mt[j],`setCl(${i},'mt',${j},this.value)`)}</td>`).join("")}<td class="n">${f2(o.rT)}</td><td class="n noprint">${P}</td><td class="n noprint">${M}</td><td class="n noprint">${o.att.toFixed(1)}</td><td class="t">${o.menu}</td></tr>`});
- Fc+=`<tr class="tot"><td colspan="2">Total</td>${[0,1,2,3].map(j=>`<td class="n">${S.days.filter(d=>!d.hol).reduce((a,d)=>a+d.cp[j],0)}</td><td class="n">${S.days.filter(d=>!d.hol).reduce((a,d)=>a+d.mt[j],0)}</td>`).join("")}<td class="n">${f2(C.T.rT)}</td><td class="n noprint">${tp}</td><td class="n noprint">${tm}</td><td class="n noprint">${C.T.att.toFixed(1)}</td><td></td></tr></table>
- <p><b>TOTAL CP:</b> ${tp} &nbsp; <b>TOTAL MT:</b> ${tm}</p><p style="text-align:right;margin-top:30px">Signature of Headmaster</p>`;$("p_c").innerHTML=Fc;
+ Fc+=`<tr><td class="t">Class</td>${Array(13).fill('<td class="n">-</td>').join("")}</tr><tr class="tot"><td class="t">Total</td>${[0,1,2,3,4].map(j=>`<td class="n">${dsh(et(j))}</td>`).join("")}<td class="n">${dsh(eB)}</td>${[5,6,7,8,9].map(j=>`<td class="n">${dsh(et(j))}</td>`).join("")}<td class="n">${dsh(eG)}</td><td class="n">${dsh(eB+eG)}</td></tr></table>
+ <table class="srv" style="min-width:1000px"><colgroup><col style="width:34px"><col style="width:88px">${cl.map(_=>'<col style="width:46px"><col style="width:46px">').join("")}<col style="width:84px"><col></colgroup>
+ <tr><th rowspan="3">SL NO</th><th rowspan="3">CMDM Serving Date</th><th colspan="10">No of Children Provided CMDM and Present for Primay/Upper Primary</th><th rowspan="3">Rice Utilized (in KG)</th><th rowspan="3">Menu</th></tr><tr>${cl.map(x=>`<th colspan="2">${x}</th>`).join("")}</tr><tr>${cl.map(_=>"<th>CP</th><th>MT</th>").join("")}</tr>`;
+ S.days.forEach((d,i)=>{if(d.hol)return;const o=C.D[i];
+  Fc+=`<tr><td class="c">${i+1}</td><td class="c">${dt(d.date)}</td>${[0,1,2,3].map(j=>`<td>${inp(d.cp[j],`setCl(${i},'cp',${j},this.value)`)}</td><td>${inp(d.mt[j],`setCl(${i},'mt',${j},this.value)`)}</td>`).join("")}<td></td><td></td><td class="n">${f3(o.rT)}</td><td class="t">${o.menu}</td></tr>`});
+ Fc+=`<tr class="tot"><td colspan="2">Total</td>${[0,1,2,3].map(j=>`<td class="n">${S.days.filter(d=>!d.hol).reduce((a,d)=>a+d.cp[j],0)}</td><td class="n">${S.days.filter(d=>!d.hol).reduce((a,d)=>a+d.mt[j],0)}</td>`).join("")}<td></td><td></td><td class="n">${f3(C.T.rT)}</td><td></td></tr></table>
+ <p style="text-align:right;margin-top:30px">Signature of Headmaster</p>`;$("p_c").innerHTML=Fc;
  // MDCF
- const h2=x=>`<tr><th colspan="12" style="text-align:left;background:#d9e2ee">${x}</th></tr>`,rw=(a,b)=>`<td colspan="3" class="t">${a}</td><td colspan="9" class="t">${b}</td>`;
+ const h2=x=>`<tr><td colspan="12" style="border:0;background:none;font-weight:700;font-size:15px;padding:8px 0 3px;text-align:left;height:auto">${x}</td></tr>`,cb=v=>`<span style="display:inline-block;width:34px;height:22px;line-height:19px;border:1px solid #000;border-radius:6px;text-align:center;font-size:18px;font-weight:700;vertical-align:middle">${v?"✓":""}</span>`,fx=a=>`<div class="mfx" style="display:flex;border:1px solid #000;border-top:0;min-height:36px">${a.map((x,i)=>`<div style="flex:${x[0]};padding:3px 6px;display:flex;align-items:center;${x[2]||""}">${x[1]}</div>`).join("")}</div>`;
  const obU=R(c.ob-c.obV),rcU=R(c.recv-c.recvV),cbV=R(c.obV+c.recvV-C.T.rV),cbU=R(obU+rcU-C.T.rU),sU=C.T.sU;
  const fr=(n,o,r,e)=>`<tr><td colspan="4" class="t">${n}</td><td colspan="2" class="n">${f2(o)}</td><td colspan="2" class="n">${f2(r)}</td><td colspan="2" class="n">${f2(e)}</td><td colspan="2" class="n">${f2(o+r-e)}</td></tr>`;
  const gr=(a,b,o,r,e)=>`<tr><td colspan="3" class="t">${a}</td><td colspan="2" class="t">${b}</td><td colspan="2" class="n">${f2(o)}</td><td colspan="2" class="n">${f2(r)}</td><td colspan="1" class="n">${f2(e)}</td><td colspan="2" class="n">${f2(R(o+r-e))}</td></tr>`;
  const ck=S.cooks,ch=R(c.hon/2);
- $("p_mdcf").innerHTML='<div class="sheet">'+H("PM POSHAN – School Monthly Data Capture Format (MDCF)")+`<div class="fl"><table style="max-width:1000px">
- ${h2("1. School Details")}<tr>${rw("Type","☑ Government &nbsp; ☐ Local Body &nbsp; ☐ EGS/AIE &nbsp; ☐ NCLP &nbsp; ☐ Madrasa/Maqtab")}</tr><tr>${rw("Category","☐ Primary &nbsp; ☐ Upper Primary &nbsp; ☑ Primary with Upper Primary")}</tr>
- <tr>${rw("State / District / Block","WEST BENGAL / BANKURA / TALDANGRA &nbsp; Village/Ward: TALDANGRA")}</tr><tr>${rw("Kitchen / NGO-SHG / Enrolment","SCHOOL KITCHEN / SHG / ${eB+eG}".replace("${eB+eG}",eB+eG))}</tr>
- ${h2("2. Meals Availed Status")}<tr><th colspan="3"></th><th colspan="3">Bal Vatika</th><th colspan="3">Primary</th><th colspan="3">Upper Primary</th></tr>
- <tr><td colspan="3" class="t">School days during month</td><td colspan="3" class="n">-</td><td colspan="3" class="n">${C.T.days} DAYS</td><td colspan="3" class="n">${C.T.days} DAYS</td></tr>
- <tr><td colspan="3" class="t">Actual days MDM served</td><td colspan="3" class="n">-</td><td colspan="3" class="n">${C.T.days} DAYS</td><td colspan="3" class="n">${C.T.days} DAYS</td></tr>
- <tr><td colspan="3" class="t">Total meals served</td><td colspan="3" class="n">-</td><td colspan="3" class="n">${C.T.pV}</td><td colspan="3" class="n">${C.T.pU}</td></tr>
- <tr><td colspan="3" class="t">Average attendance (%)</td><td colspan="9" class="n">${C.T.att.toFixed(1)}%</td></tr>${h2("3. Fund Details (in Rs.)")}<tr><th colspan="4">Component</th><th colspan="2">Opening Bal</th><th colspan="2">Received</th><th colspan="2">Expenditure</th><th colspan="2">Closing Bal</th></tr>
+ $("p_mdcf").innerHTML=`<div class="sheet"><div class="fl"><div style="text-align:center;font-weight:600;font-size:22px;line-height:1.25">Pradhan Mantri Poshan Shakti Nirman (PM POSHAN)<br>School Monthly Data Capture Format (MDCF)</div>
+ <div style="font-weight:700;font-size:15px;margin:10px 0 6px">Instructions: Keep following registers at the time of filling the form:-<br>1) Enrolment Register. 2) Account 3) Bank Account Pass book. 4) Cooking cost details etc.</div>
+ <div style="font-weight:700;font-size:15px;margin:6px 0 3px">1. School Details</div><div style="border-top:1px solid #000;max-width:1000px">${fx([[2,"<b>Type</b>"],[2,"Government","border-left:1px solid #000"],[1,cb(1)],[1.6,"Local Body"],[1,cb()],[1.8,"EGS/AIE Centers"],[1,cb()],[1,"NCLP"],[1,cb()],[1.6,"Madras / Maqtab"],[1,cb()]])}${fx([[2,"<b>Category</b>"],[2,"Primary","border-left:1px solid #000"],[1,cb()],[1.6,"Upper Primary"],[1,cb()],[4.4,"Primary with Upper Primary"],[1,cb(1)]])}${fx([[3.2,"<b>State / UT- WEST BENGAL</b>"],[1.6,"<b>District-</b>","border-left:1px solid #000"],[1.8,"BANKURA"],[1.4,"<b>Block/NP-</b>"],[1.8,"TALDANGRA"],[1.4,"<b>Village/ Ward-</b>","border-left:1px solid #000"],[2,"<b>TALDANGRA</b>"]])}${fx([[3.2,"<b>Kitchen Type- SCHOOL KITCHEN</b>"],[1.6,"<b>NGO/SHG-</b>","border-left:1px solid #000"],[1.8,"SHG"],[1.4,"<b>Enrolment-</b>","border-left:1px solid #000"],[1.8,`<b style="font-size:20px">${eB+eG}</b>`],[3.4,"","border-left:1px solid #000"]])}</div>
+ <div style="font-weight:700;font-size:15px;margin:10px 0 4px">2. Meals Availed Status</div>
+ <table class="mst" style="table-layout:fixed;max-width:1000px"><colgroup><col style="width:40%"><col style="width:20%"><col style="width:20%"><col></colgroup><tr><th style="background:#fff"></th><th style="background:#fff">Bal Vatika</th><th style="background:#fff">Primary</th><th style="background:#fff">Upper Primary</th></tr>
+ <tr style="height:44px"><td class="t" style="white-space:normal">Number of School days during month</td><td></td><td class="c mbig">${C.T.days} DAYS</td><td class="c mbig">${C.T.days} DAYS</td></tr>
+ <tr style="height:44px"><td class="t" style="white-space:normal">Actual number of days Mid Day Meal served</td><td></td><td class="c mbig">${C.T.days} DAYS</td><td class="c mbig">${C.T.days} DAYS</td></tr>
+ <tr style="height:44px"><td class="t" style="white-space:normal">Total Meals served during the month</td><td></td><td class="c mbig">${C.T.pV}</td><td class="c mbig">${C.T.pU}</td></tr></table>
+ <table style="max-width:1000px">
+ ${h2("3. Fund Details (in Rs.)")}<tr><th colspan="4">Component</th><th colspan="2">Opening Bal</th><th colspan="2">Received</th><th colspan="2">Expenditure</th><th colspan="2">Closing Bal</th></tr>
  ${fr("Cooking Cost – Bal Vatika",0,0,0)}${fr("Cooking Cost – Primary",0,C.T.sV,C.T.sV)}${fr("Cooking Cost – Upper Primary",0,sU,sU)}${fr("Cook Cum Helper",0,+c.hon,+c.hon)}${fr("School Expenses : MME",0,0,0)}
  <tr><td colspan="8" class="t">Closing balance matches with Bank closing balance?</td><td colspan="4" class="c">☑ Yes &nbsp; ☐ No</td></tr>
  ${h2("4. Cook Cum Helper Payment Details")}<tr><th>S.No</th><th colspan="4">Cook Name</th><th>Sex</th><th>Cat.</th><th colspan="2">Mode</th><th colspan="3">Amount received (Rs)</th></tr>
@@ -250,8 +295,9 @@ function draw(){drawM();const C=calc(),L=checks(C),c=S.cfg;
  </div><div style="display:flex;justify-content:space-between;margin-top:10px"><span>Signature of the SMC Chairperson / Gram Pradhan</span><span>Signature of Head Teacher</span></div></div>`;
 
  // DASH
+ const Ys=synCalc(C),sc=(a,b,cl)=>`<div class="chip"><small>${a}</small><b class="${cl||""}">${b}</b></div>`,snapHTML=`<div class="snapt">Month snapshot</div><div class="snap">${sc("Rice OB (kg)",f2(c.ob))}${sc("Rice received",f2(c.recv))}${sc("Rice used",f2(C.T.rT))}${sc("Rice CB (kg)",f2(C.T.cb))}${sc("₹ OB",f2(c.obRs||0))}${sc("₹ Cooking cost",f2(C.T.sT))}${sc("₹ Spent",f2(C.T.exp))}${sc("₹ CB",f2(C.T.rcb))}${sc("Claimed ₹",f0(Ys.cm))}${sc("Excess / Deficit ₹",f2(Ys.exc),Ys.exc>=0?"ok":"bad")}</div>`;
  const nS=S.days.filter(d=>isSun(d.date)).length,nH=S.days.filter(d=>d.hol&&!isSun(d.date)).length,kp=(a,b,cl)=>`<div class="card" style="min-width:120px;flex:1;margin:0"><div style="font-size:11px;color:#555">${a}</div><div style="font-size:20px;font-weight:700" class="${cl||""}">${b}</div></div>`;
- let Dd=H("Dashboard – Mid Day Meal")+`<div class="ban ${L.length?"bad":"ok"}">${L.length?"✘ UNMATCHED – "+L.length+" mismatch(es), see Report":"✔ ALL MATCHED"}</div><div class="row" style="align-items:stretch;margin-bottom:10px">`+kp("Calendar days",S.days.length)+kp("Sundays",nS)+kp("Other holidays",nH)+kp("Serving days",C.T.days)+kp("Avg attendance",C.T.att.toFixed(1)+"%")+kp("Meals served",C.T.pV+C.T.pU)+kp("P1 Total EXP",f0(C.T.exp))+kp("Rice closing (kg)",f2(C.T.cb))+kp("Unmatched",L.length,L.length?"bad":"ok")+`</div>
+ let Dd=H("Dashboard – Mid Day Meal")+`<div class="ban ${L.length?"bad":"ok"}">${L.length?"✘ UNMATCHED – "+L.length+" mismatch(es), see Report":"✔ ALL MATCHED"}</div>${snapHTML}<div class="row" style="align-items:stretch;margin-bottom:10px">`+kp("Calendar days",S.days.length)+kp("Sundays",nS)+kp("Other holidays",nH)+kp("Serving days",C.T.days)+kp("Avg attendance",C.T.att.toFixed(1)+"%")+kp("Meals served",C.T.pV+C.T.pU)+kp("P1 Total EXP",f0(C.T.exp))+kp("Rice closing (kg)",f2(C.T.cb))+kp("Unmatched",L.length,L.length?"bad":"ok")+`</div>
  <table style="min-width:900px;max-width:1100px"><colgroup><col style="width:90px"><col style="width:90px"><col style="width:170px"><col style="width:70px"><col style="width:70px"><col style="width:150px"><col style="width:90px"><col style="width:90px"><col style="width:50px"><col class="noprint" style="width:110px"></colgroup>
  <tr><th>Date</th><th>Day</th><th>Status</th><th>Present</th><th>MDM taken</th><th>% Attendance</th><th>P1 Total EXP</th><th>Material</th><th>Match</th><th class="noprint">Action</th></tr>`;
  C.D.forEach((o,i)=>{const d=S.days[i],bt=`<td class="c noprint"><button onclick="togHol(${i})">${o.hol?"Mark working":"Mark holiday"}</button></td>`;
@@ -262,9 +308,9 @@ function draw(){drawM();const C=calc(),L=checks(C),c=S.cfg;
  // REPORT
  $("p_rep").innerHTML=`<h3>Reconciliation Report – ${L.length?"UNMATCHED":"MATCHED"}</h3>`+(L.length?`<table style="max-width:900px"><tr><th style="width:34%">Where</th><th>A</th><th>B</th><th style="width:90px">Difference</th></tr>`+L.map(x=>`<tr class="bad"><td class="t">${x.w}</td><td class="t">${x.a}</td><td class="t">${x.b}</td><td class="n">${f0(x.d)}</td></tr>`).join("")+`</table>`:`<p class="ok">Everything matches.</p>`)+`<p class="noprint">Fix the entries (Daily Entry / Material) or Fuel; the report re-checks instantly.</p>`;
  document.querySelectorAll(".pg table").forEach(tb=>{const cs=[...tb.querySelectorAll(":scope>colgroup>col")];if(!cs.length)return;const w=cs.map(c=>parseFloat(c.style.width)||150),s=w.reduce((x,y)=>x+y,0);cs.forEach((c,i)=>c.style.width=(w[i]/s*100).toFixed(2)+"%")});
- document.querySelectorAll("#nav button.tab").forEach(b=>{const n=b.dataset.t=="rep"?L.length:0;b.dataset.t=="rep"&&(b.textContent="Report ("+L.length+")")})}
-const $=id=>document.getElementById(id),TABS=[["m","📱 Entry"],["dash","Dashboard"],["p1","Bill P1 (enter Total EXP)"],["mat","Material"],["p2","Bill P2"],["k","Form K + Dashboard"],["c","Form C"],["mdcf","MDCF"],["rep","Report"]];
-$("nav").innerHTML=TABS.map(t=>`<button class="tab" data-t="${t[0]}" onclick="tab('${t[0]}')">${t[1]}</button>`).join("")+`<span class="sp"></span><button onclick="window.print()">Print</button><button onclick="logout()">Logout</button>`;
+ document.querySelectorAll("#nav button.tab").forEach(b=>{const n=b.dataset.t=="rep"?L.length:0;b.dataset.t=="rep"&&(b.textContent="✅ Report ("+L.length+")")})}
+const $=id=>document.getElementById(id),TABS=[["m","✏️ Daily Entry"],["dash","📊 Dashboard"],["p1","🧾 Bill P1"],["mat","🥕 Material"],["p2","💰 Bill P2"],["k","📄 Form K"],["c","📘 Form C"],["mdcf","📑 MDCF"],["rep","✅ Report"]];
+$("nav").innerHTML=`<div class="brand"><b>TFHS</b><small>Mid Day Meal</small></div>`+TABS.map(t=>`<button class="tab" data-t="${t[0]}" onclick="tab('${t[0]}')">${t[1]}</button>`).join("")+`<span class="sp"></span><div id="navsum"></div><button class="act" onclick="window.print()">🖨 Print</button><button class="act" onclick="logout()">⎋ Logout</button>`;
 function tab(t){document.querySelectorAll(".pg").forEach(p=>p.classList.toggle("on",p.id=="p_"+t));document.querySelectorAll("#nav .tab").forEach(b=>b.classList.toggle("on",b.dataset.t==t))}
 
 /* ================= FIREBASE / LOGIN / MONTHS / MOBILE ================= */
@@ -340,30 +386,28 @@ function cpToMt(i){S.days[i].mt=[...S.days[i].cp];go()}
 /* ---- mobile entry page ---- */
 function drawM(){
  const el=$("p_m");if(!el||!S||!S.days)return;
- const C=calc(),L=checks(C),c=S.cfg,adm=isAdm(),Y=synCalc(C),cV=R(c.obV+c.recvV-C.T.rV),
+ const C=calc(),L=checks(C),c=S.cfg,adm=isAdm(),Y=synCalc(C),today=new Date().toISOString().slice(0,10),
  mi=(v,fn,dis,cls)=>`<input type="number" inputmode="decimal" step="any" class="${cls||""}" value="${v}" ${dis?"disabled":""} onfocus="this.select()" onchange="${fn}">`,
- chip=(a,b,cls)=>`<div class="chip"><small>${a}</small><b class="${cls||""}">${b}</b></div>`,
- fld=(lab,k,dis)=>`<label>${lab}${mi(c[k]||0,`setC('${k}',this.value)`,dis)}</label>`;
- let h=`<div class="mh"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><b style="font-size:17px">${c.monthName} ${S.cfg.ym.slice(0,4)}</b><br><small>${ME?ME.email:""} · ${ROLE||""}</small></div><button class="mb o" onclick="logout()">Logout</button></div>
- <div class="ban ${L.length?"bad":"ok"}" style="font-size:13px">${L.length?"✘ UNMATCHED – "+L.length+" mismatch(es), see Report tab":"✔ All matched"}</div>
- <div class="chips">${chip("Rice OB (kg)",f2(c.ob))}${chip("Rice received",f2(c.recv))}${chip("Rice used",f2(C.T.rT))}${chip("Rice CB (kg)",f2(C.T.cb))}
- ${chip("₹ OB",f2(c.obRs||0))}${chip("₹ Cooking cost",f2(C.T.sT))}${chip("₹ Spent",f2(C.T.exp))}${chip("₹ CB",f2(C.T.rcb))}${chip("Claimed ₹",f0(Y.cm))}${chip("Excess / Deficit ₹",f2(Y.exc),Y.exc>=0?"ok":"bad")}</div>
- <details><summary>Month setup &amp; receipts</summary><div class="g2" style="margin-top:8px">
- ${fld("Rice OB (kg)","ob",!adm)}${fld("Rice OB – Class V","obV",!adm)}${fld("₹ Opening balance","obRs",!adm)}${fld("Rice received (kg)","recv",S.rcpt.length>0)}${fld("Rice received – Class V","recvV",S.rcpt.length>0)}${fld("Present above taken %","diff",false)}<label>MDM taken % (all days)<input type="number" inputmode="decimal" step="any" placeholder="e.g. 90" onchange="pctAll(this.value)"></label>${fld("Fuel qty","fuelQ",false)}${fld("Fuel amount ₹","fuelA",false)}${fld("SHG honorarium ₹","hon",!adm)}
+ fld=(lab,k,dis)=>`<label>${lab}${mi(c[k]||0,`setC('${k}',this.value)`,dis)}</label>`,
+ ci=(v,fn,cls)=>`<input type="number" inputmode="decimal" step="any" class="${cls||""}" value="${v}" onfocus="this.select()" onchange="${fn}">`;
+ const ns=$("navsum");if(ns)ns.innerHTML=`<div class="ns-h">${c.monthName} ${c.ym.slice(0,4)}</div><div class="ns-r"><span>Rice CB</span><b>${f2(C.T.cb)} kg</b></div><div class="ns-r"><span>₹ CB</span><b>${f2(C.T.rcb)}</b></div><div class="ns-r"><span>Claimed</span><b>${f0(Y.cm)}</b></div><div class="ns-r"><span>Exc / Def</span><b class="${Y.exc>=0?"gk":"rk"}">${f2(Y.exc)}</b></div><div class="ns-st ${L.length?"bad":"ok"}">${L.length?"✘ "+L.length+" mismatch(es)":"✔ All matched"}</div>`;
+ const live=S.days.filter(d=>!d.hol),sm=k=>live.reduce((a,d)=>a+(+d[k]||0),0),sj=(k,j)=>live.reduce((a,d)=>a+(+d[k][j]||0),0);
+ let h=`<div class="ent"><div class="ent-top"><div><div class="ent-t">Daily entry</div><div class="ent-s">${c.monthName} ${c.ym.slice(0,4)} · ${C.T.days} serving days · ${C.T.pV+C.T.pU} meals · ₹${f0(C.T.exp)} spent · full summary on the Dashboard</div></div><div class="ent-r"><span class="pill ${L.length?"bad":"ok"}">${L.length?"✘ "+L.length+" mismatch(es)":"✔ All matched"}</span><label class="pctb">MDM taken % (all days)<input type="number" inputmode="decimal" step="any" placeholder="e.g. 90" onchange="pctAll(this.value)"></label></div></div>`;
+ let t=`<div class="ecard"><h3>Day-wise entry <small>— one line per date · Present, MDM taken, expense and menu</small></h3><div class="dwrap" style="border:0;border-radius:0;margin:0"><table class="dt"><thead><tr><th class="sc" rowspan="2">Date</th><th rowspan="2">MDM<br>%</th><th colspan="4">Present</th><th colspan="4">MDM taken</th><th rowspan="2">Exp ₹</th><th rowspan="2">Att%</th><th rowspan="2">Menu</th><th rowspan="2"></th></tr><tr><th>V</th><th>VI</th><th>VII</th><th>VIII</th><th>V</th><th>VI</th><th>VII</th><th>VIII</th></tr></thead><tbody>`;
+ C.D.forEach((o,i)=>{const d=S.days[i],wd=new Date(d.date+"T00:00:00").toLocaleDateString("en-GB",{weekday:"short"}),day=d.date.slice(8),dc=`<td class="sc"><b>${day}</b> ${wd}</td>`,tc=d.date===today?" today":"";
+  if(o.hol){t+=`<tr class="hl${tc}">${dc}<td colspan="12" style="text-align:left">${isSun(d.date)?"Sunday":(d.why||"Holiday")}</td><td><button class="mb o" onclick="togHol(${i})">Work</button></td></tr>`;return}
+  t+=`<tr class="${o.ok?"":"bd"}${tc}">${dc}<td>${ci(d.pct||"",`fillPct(${i},this.value)`)}</td>${[0,1,2,3].map(j=>`<td>${ci(d.cp[j],`setCl(${i},'cp',${j},this.value)`)}</td>`).join("")}${[0,1,2,3].map(j=>`<td>${ci(d.mt[j],`setCl(${i},'mt',${j},this.value)`)}</td>`).join("")}<td>${ci(d.exp,`setD(${i},'exp',this.value)`,"ex")}</td><td class="at">${o.att.toFixed(1)}</td><td><input class="tx mn" type="text" value="${esc(d.menu)}" onchange="setD(${i},'menu',this.value)"></td><td class="ac"><button class="mb o" title="MDM taken = Present" onclick="cpToMt(${i})">=P</button><button class="mb o" title="Mark holiday" onclick="togHol(${i})">H</button>${o.ok?"":`<button class="mb" title="Material ${f0(o.mat)} ≠ Exp ${f0(o.exp)} – auto-split" onclick="sug(${i})">⚖</button>`}</td></tr>`});
+ t+=`</tbody><tfoot><tr><td class="sc">Total</td><td></td>${[0,1,2,3].map(j=>`<td>${sj("cp",j)}</td>`).join("")}${[0,1,2,3].map(j=>`<td>${sj("mt",j)}</td>`).join("")}<td>${f0(C.T.exp)}</td><td>${C.T.att.toFixed(1)}</td><td></td><td></td></tr></tfoot></table></div><div class="ent-leg"><b>=P</b> copies Present → MDM taken · <b>H</b> marks holiday · <b>⚖</b> auto-splits materials when they don't match the day's expense · red row = expense ≠ material · blue outline = today. Present = taken + diff% when you enter MDM %.</div></div>`;
+ const setup=`<div class="ent-grid"><div class="mh" style="max-width:none;margin:0"><details><summary>⚙️ Month setup &amp; receipts</summary><div class="g2" style="margin-top:8px">
+ ${fld("Rice OB (kg)","ob",!adm)}${fld("Rice OB – Class V","obV",!adm)}${fld("₹ Opening balance","obRs",!adm)}${fld("Rice received (kg)","recv",S.rcpt.length>0)}${fld("Rice received – Class V","recvV",S.rcpt.length>0)}${fld("Present above taken %","diff",false)}${fld("Fuel qty","fuelQ",false)}${fld("Fuel amount ₹","fuelA",false)}${fld("SHG honorarium ₹","hon",!adm)}
  ${fld("Rice/head V (kg)","rcV",!adm)}${fld("Rice/head VI-VIII","rcU",!adm)}${fld("₹/head V","rsV",!adm)}${fld("₹/head VI-VIII","rsU",!adm)}</div>
- ${rcptUI()}${adm?`<button class="mb" style="margin-top:8px" onclick="refreshOB()">↻ Re-take OB from previous month</button>`:`<small>Opening balances, rates and honorarium can be changed by admin only.</small>`}</details>
- <details><summary>Weekly menu (default)</summary>${wmUI()}</details>
- <details><summary>Payments &amp; vouchers (P2 synopsis)</summary><div class="g2" style="margin-top:8px"><label>Chicken (voucher)${mi(S.syn.chk||0,"setSy(this.value)")}</label><label>JALANI paid ₹${mi(S.pay.jal||0,"setPy('jal',this.value)")}</label><label>SHG market ₹${mi(S.pay.shgm||0,"setPy('shgm',this.value)")}</label><label>Chicken paid ₹${mi(S.pay.chk||0,"setPy('chk',this.value)")}</label></div>
+ ${rcptUI()}${adm?`<button class="mb" style="margin-top:8px" onclick="refreshOB()">↻ Re-take OB from previous month</button>`:`<small>Opening balances, rates and honorarium can be changed by admin only.</small>`}</details></div>
+ <div class="mh" style="max-width:none;margin:0"><details><summary>🍽 Weekly menu (default)</summary>${wmUI()}</details></div>
+ <div class="mh" style="max-width:none;margin:0"><details><summary>💳 Payments &amp; vouchers (P2 synopsis)</summary><div class="g2" style="margin-top:8px"><label>Chicken (voucher)${mi(S.syn.chk||0,"setSy(this.value)")}</label><label>JALANI paid ₹${mi(S.pay.jal||0,"setPy('jal',this.value)")}</label><label>SHG market ₹${mi(S.pay.shgm||0,"setPy('shgm',this.value)")}</label><label>Chicken paid ₹${mi(S.pay.chk||0,"setPy('chk',this.value)")}</label></div>
  <div class="mini"><span>Mudi (Kha) ${f2(C.grocM)}</span><span>SABJI+Chicken ${f2(C.sabM)}</span></div>
  ${S.pay.oth.map((x,i)=>`<div class="g2" style="margin-top:6px"><label>Name<input class="tx" style="text-align:left" value="${esc(x.l)}" onchange="setPyO(${i},'l',this.value)"></label><label>₹ <button class="mb o" style="float:right;padding:2px 8px" onclick="delPyO(${i})">✕</button>${mi(x.a||0,`setPyO(${i},'a',this.value)`)}</label></div>`).join("")}
- <button class="mb" style="margin-top:8px" onclick="addPyO()">+ Add payment line</button><div class="mini"><span>Total paid ${f2(Y.pt)}</span><span>Claimed ${f0(Y.cm)}</span></div></details>`;
- const ci=(v,fn,cls)=>`<input type="number" inputmode="decimal" step="any" class="${cls||""}" value="${v}" onfocus="this.select()" onchange="${fn}">`;
- let t=`<div class="mh" style="max-width:1100px"><div class="dwrap"><table class="dt"><thead><tr><th class="sc" rowspan="2">Date</th><th rowspan="2">MDM<br>%</th><th colspan="4">Present</th><th colspan="4">MDM taken</th><th rowspan="2">Exp ₹</th><th rowspan="2">Att%</th><th rowspan="2">Menu</th><th rowspan="2"></th></tr><tr><th>V</th><th>VI</th><th>VII</th><th>VIII</th><th>V</th><th>VI</th><th>VII</th><th>VIII</th></tr></thead><tbody>`;
- C.D.forEach((o,i)=>{const d=S.days[i],wd=new Date(d.date+"T00:00:00").toLocaleDateString("en-GB",{weekday:"short"}),day=d.date.slice(8),dc=`<td class="sc"><b>${day}</b> ${wd}</td>`;
-  if(o.hol){t+=`<tr class="hl">${dc}<td colspan="12" style="text-align:left">${isSun(d.date)?"Sunday":(d.why||"Holiday")}</td><td><button class="mb o" onclick="togHol(${i})">Work</button></td></tr>`;return}
-  t+=`<tr class="${o.ok?"":"bd"}">${dc}<td>${ci(d.pct||"",`fillPct(${i},this.value)`)}</td>${[0,1,2,3].map(j=>`<td>${ci(d.cp[j],`setCl(${i},'cp',${j},this.value)`)}</td>`).join("")}${[0,1,2,3].map(j=>`<td>${ci(d.mt[j],`setCl(${i},'mt',${j},this.value)`)}</td>`).join("")}<td>${ci(d.exp,`setD(${i},'exp',this.value)`,"ex")}</td><td class="at">${o.att.toFixed(1)}</td><td><input class="tx mn" type="text" value="${esc(d.menu)}" onchange="setD(${i},'menu',this.value)"></td><td class="ac"><button class="mb o" title="MDM taken = Present" onclick="cpToMt(${i})">=P</button><button class="mb o" title="Mark holiday" onclick="togHol(${i})">H</button>${o.ok?"":`<button class="mb" title="Material ${f0(o.mat)} ≠ Exp ${f0(o.exp)} – auto-split" onclick="sug(${i})">⚖</button>`}</td></tr>`});
- t+=`</tbody></table></div><small>One line per date. Present = taken + diff% when you enter MDM %. <b>=P</b> copies Present to MDM taken, <b>H</b> marks holiday, <b>⚖</b> auto-splits materials when they don't match the day's expense.</small></div>`;
- el.innerHTML=h+`<div id="sst"></div></div>`+t;uiStatus()}
+ <button class="mb" style="margin-top:8px" onclick="addPyO()">+ Add payment line</button><div class="mini"><span>Total paid ${f2(Y.pt)}</span><span>Claimed ${f0(Y.cm)}</span></div></details></div></div>`;
+ el.innerHTML=h+t+setup+`<div id="sst"></div></div>`;uiStatus()}
 
 showLogin();
 tab("m");
