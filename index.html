@@ -147,6 +147,9 @@ nav .brand{display:none}#navsum{display:none}
 #p_c th,#p_c .enr td{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere;line-height:1.15}
 #p_c .enr th[style*="font-size:10px"]{font-size:9.5px!important;padding:2px 1px}
 @media print{#p_c .enr th[style*="font-size:10px"]{font-size:7.5pt!important;padding:1px!important}#p_c th{line-height:1.15!important}}
+#p_c .srv td.mnu{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.15;overflow-wrap:anywhere}
+@media print{#p_c .srv td.mnu{font-size:7pt!important;padding:1px 3px!important}}
+@media print{#p_c .srv td.mnu.m1{font-size:6.5pt!important}#p_c .srv td.mnu.m2{font-size:6pt!important}#p_c .srv td.mnu.m3{font-size:5.5pt!important}}
 </style></head><body>
 <div id="login"><form onsubmit="doLogin(event)"><h2>TFHS Mid Day Meal</h2><p>Sign in with your portal account (same login as the XI Exam portal).</p>
 <input id="le" type="email" placeholder="Email" autocomplete="username" required><input id="lp" type="password" placeholder="Password" autocomplete="current-password" required>
@@ -293,10 +296,10 @@ function draw(){drawM();const C=calc(),L=checks(C),c=S.cfg;
  en.forEach((r,i)=>{const b=r.slice(0,5).reduce((a,x)=>a+x,0),g=r.slice(5,10).reduce((a,x)=>a+x,0);Fc+=`<tr><td class="t">${eN[i]}</td>${r.slice(0,5).map((x,j)=>`<td>${inp(x||"-",`setE(${i},${j},this.value)`)}</td>`).join("")}<td class="n">${dsh(b)}</td>${r.slice(5,10).map((x,j)=>`<td>${inp(x||"-",`setE(${i},${j+5},this.value)`)}</td>`).join("")}<td class="n">${dsh(g)}</td><td class="n">${dsh(b+g)}</td></tr>`});
  const eB=en.reduce((a,r)=>a+r.slice(0,5).reduce((x,y)=>x+y,0),0),eG=en.reduce((a,r)=>a+r.slice(5,10).reduce((x,y)=>x+y,0),0);
  Fc+=`<tr><td class="t">Class</td>${Array(13).fill('<td class="n">-</td>').join("")}</tr><tr class="tot"><td class="t">Total</td>${[0,1,2,3,4].map(j=>`<td class="n">${dsh(et(j))}</td>`).join("")}<td class="n">${dsh(eB)}</td>${[5,6,7,8,9].map(j=>`<td class="n">${dsh(et(j))}</td>`).join("")}<td class="n">${dsh(eG)}</td><td class="n">${dsh(eB+eG)}</td></tr></table>
- <table class="srv" style="min-width:1000px"><colgroup><col style="width:34px"><col style="width:88px">${cl.map(_=>'<col style="width:46px"><col style="width:46px">').join("")}<col style="width:84px"><col></colgroup>
+ <table class="srv" style="min-width:1000px"><colgroup><col style="width:34px"><col style="width:84px">${cl.map(_=>'<col style="width:40px"><col style="width:40px">').join("")}<col style="width:80px"><col style="width:270px"></colgroup>
  <tr><th rowspan="3">SL NO</th><th rowspan="3">CMDM Serving Date</th><th colspan="10">No of Children Provided CMDM and Present for Primay/Upper Primary</th><th rowspan="3">Rice Utilized (in KG)</th><th rowspan="3">Menu</th></tr><tr>${cl.map(x=>`<th colspan="2">${x}</th>`).join("")}</tr><tr>${cl.map(_=>"<th>CP</th><th>MT</th>").join("")}</tr>`;
  S.days.forEach((d,i)=>{if(d.hol)return;const o=C.D[i];
-  Fc+=`<tr><td class="c">${i+1}</td><td class="c">${dt(d.date)}</td>${[0,1,2,3].map(j=>`<td>${inp(d.cp[j],`setCl(${i},'cp',${j},this.value)`)}</td><td>${inp(d.mt[j],`setCl(${i},'mt',${j},this.value)`)}</td>`).join("")}<td></td><td></td><td class="n">${f3(o.rT)}</td><td class="t">${o.menu}</td></tr>`});
+  Fc+=`<tr><td class="c">${i+1}</td><td class="c">${dt(d.date)}</td>${[0,1,2,3].map(j=>`<td>${inp(d.cp[j],`setCl(${i},'cp',${j},this.value)`)}</td><td>${inp(d.mt[j],`setCl(${i},'mt',${j},this.value)`)}</td>`).join("")}<td></td><td></td><td class="n">${f3(o.rT)}</td><td class="t mnu${String(o.menu||"").length>100?" m3":String(o.menu||"").length>70?" m2":String(o.menu||"").length>40?" m1":""}">${o.menu}</td></tr>`});
  Fc+=`<tr class="tot"><td colspan="2">Total</td>${[0,1,2,3].map(j=>`<td class="n">${S.days.filter(d=>!d.hol).reduce((a,d)=>a+d.cp[j],0)}</td><td class="n">${S.days.filter(d=>!d.hol).reduce((a,d)=>a+d.mt[j],0)}</td>`).join("")}<td></td><td></td><td class="n">${f3(C.T.rT)}</td><td></td></tr></table>
  <p style="text-align:right;margin-top:30px">Signature of Headmaster</p>`;$("p_c").innerHTML=Fc;
  // MDCF
