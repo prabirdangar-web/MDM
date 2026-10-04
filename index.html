@@ -241,13 +241,32 @@ function synCalc(C){const c=S.cfg,kv=C.kv,hon=+c.hon||0,sy=S.syn,py=S.pay,cm=C.c
  gro=R(kv.pulse[1]+kv.oil[1]+kv.spice[1]+kv.soy[1]),chk=+sy.chk||0,so=sy.oth.reduce((a,x)=>a+(+x.a||0),0),sab=R(kv.veg[1]+kv.egg[1]+kv.oth[1]-chk-so),jal=R(C.fuel[1]),gt=R(gro+sab+chk+so+jal+hon),
  po=py.oth.reduce((a,x)=>a+(+x.a||0),0),pt=R(C.grocM+(+py.jal||0)+hon+(+py.shgm||0)+(+py.chk||0)+C.sabM+po);
  return{cm,hon,gro,chk,so,sab,jal,gt,po,pt,exc:R(cm-pt)}}
+
+/* ===== B/F Excess / Deficit from previous months in database ===== */
+let BF={ym:"",list:[],amt:0,from:"",to:""};
+const shortM=ym=>{const[y,m]=ym.split("-");return MN[+m-1].slice(0,3)+"-"+y.slice(2)};
+async function loadBF(){if(!ME||!S||!S.cfg)return;const cur=S.cfg.ym;
+ try{const q=await db.collection(COL).get(),list=[];
+  q.forEach(d=>{try{const st=JSON.parse(d.data().json);if(!st.cfg||!(st.cfg.ym<cur))return;const k=S;S=st;try{ens();const C=calc(),Y=synCalc(C);list.push({ym:st.cfg.ym,cm:Y.cm,pt:Y.pt,exc:Y.exc})}finally{S=k}}catch(e){}});
+  list.sort((a,b)=>a.ym<b.ym?-1:1);
+  if(S.cfg.ym!==cur)return;
+  BF={ym:cur,list,amt:R(list.reduce((a,x)=>a+x.exc,0)),from:list.length?list[0].ym:"",to:list.length?list[list.length-1].ym:""};draw()}
+ catch(e){}}
+function bfRows(Y){const has=BF.ym===S.cfg.ym,rng=!has?"loading…":(!BF.list.length?"no previous month saved":(BF.from===BF.to?shortM(BF.from):shortM(BF.from)+" to "+shortM(BF.to))),
+ b=has?BF.amt:0,net=R(Y.exc+b),cl=x=>x>=0?"ok":"bad";
+ return `<tr class="bfr"><td class="t" style="white-space:normal"><b>B/F Excess / Deficit</b><br><small>${rng}${has&&BF.list.length>1?" ("+BF.list.length+" months)":""}</small></td><td class="n"><b class="${cl(b)}">${has&&BF.list.length?f2(b):"--"}</b></td></tr><tr class="tot"><td class="t" style="white-space:normal"><b>Net Excess / Deficit</b><br><small>this month + B/F</small></td><td class="n"><b class="${cl(net)}">${f2(net)}</b></td></tr>`}
+function bfTable(){if(BF.ym!==S.cfg.ym||!BF.list.length)return"";
+ return `<table style="max-width:560px;margin-top:10px"><tr><th colspan="4" style="text-align:left">B/F Excess / Deficit – month-wise (${shortM(BF.from)}${BF.from===BF.to?"":" to "+shortM(BF.to)})</th></tr><tr><th>Month</th><th>Claimed ₹</th><th>Paid ₹</th><th>Excess / Deficit ₹</th></tr>`+
+ BF.list.map(x=>`<tr><td class="t">${mname(x.ym)}</td><td class="n">${f2(x.cm)}</td><td class="n">${f2(x.pt)}</td><td class="n"><b class="${x.exc>=0?"ok":"bad"}">${f2(x.exc)}</b></td></tr>`).join("")+
+ `<tr class="tot"><td class="t" colspan="3">Total B/F</td><td class="n"><b class="${BF.amt>=0?"ok":"bad"}">${f2(BF.amt)}</b></td></tr></table>`}
+
 function synHTML(C){const c=S.cfg,Y=synCalc(C),sy=S.syn,py=S.pay,n=x=>x?f2(x):"--",
  L=(a,v,cls)=>`<tr class="${cls||""}"><td class="t" style="white-space:normal">${a}</td><td class="n">${v}</td></tr>`,
  I=(v,fn)=>`<input type="number" step="any" value="${v||""}" placeholder="--" onchange="${fn}">`,
  O=(arr,set,del,l)=>arr.map((x,i)=>`<tr><td class="t"><div style="display:flex;gap:4px"><input class="tx" value="${esc(x.l)}" onchange="${set}(${i},'l',this.value)"><button class="mb o noprint" onclick="${del}(${i})">✕</button></div></td><td>${I(x.a,`${set}(${i},'a',this.value)`)}</td></tr>`).join("");
  const A=`<table><colgroup><col style="width:200px"><col style="width:120px"></colgroup>${L("<b>Claimed Amount</b>","<b>"+f2(Y.cm)+"</b>")}<tr><th colspan="2" style="text-align:left">Voucher</th></tr>${L("Grocery",n(Y.gro))}${L("SABJI",n(Y.sab))}<tr><td class="t">Chicken</td><td>${I(sy.chk,"setSy(this.value)")}</td></tr>${L("JALANI",n(Y.jal))}${O(sy.oth,"setSyO","delSyO")}<tr class="noprint"><td colspan="2"><button class="mb" onclick="addSyO()">+ Add other voucher</button></td></tr>${L("Honorarium SHG",n(Y.hon))}${L("<b>Grand Total</b>","<b>"+f2(Y.gt)+"</b>","tot")}</table>`,
- B=`<table><colgroup><col style="width:200px"><col style="width:120px"></colgroup><tr><th colspan="2" style="text-align:left">Payment</th></tr>${L("Mudi (Kha)",n(C.grocM))}<tr><td class="t">JALANI</td><td>${I(py.jal,"setPy('jal',this.value)")}</td></tr>${L("SHG HON",n(Y.hon))}<tr><td class="t">SHG MARKET</td><td>${I(py.shgm,"setPy('shgm',this.value)")}</td></tr><tr><td class="t">Chicken</td><td>${I(py.chk,"setPy('chk',this.value)")}</td></tr>${L("SABJI+Chicken",n(C.sabM))}${O(py.oth,"setPyO","delPyO")}<tr class="noprint"><td colspan="2"><button class="mb" onclick="addPyO()">+ Add payment line</button></td></tr>${L("<b>Total</b>","<b>"+f2(Y.pt)+"</b>","tot")}${L("<b>Excess / Deficit</b>",`<b class="${Y.exc>=0?"ok":"bad"}">${f2(Y.exc)}</b>`)}</table>`;
- return `<div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:14px"><div style="flex:1 1 320px;min-width:0">${A}</div><div style="flex:1 1 320px;min-width:0">${B}</div></div>${Math.abs(Y.gt-Y.cm)>=0.5?`<p class="bad noprint">Voucher grand total ${f2(Y.gt)} ≠ claimed ${f2(Y.cm)} – check Form K / Dashboard.</p>`:""}<p class="noprint"><small>Voucher side comes from Form K amounts (SABJI = vegetable + egg + others, less any Chicken / other vouchers you enter). Payment side: Mudi (Kha) and SABJI+Chicken are the Bill P1 Material totals; the other payment lines are typed.</small></p>`}
+ B=`<table><colgroup><col style="width:200px"><col style="width:120px"></colgroup><tr><th colspan="2" style="text-align:left">Payment</th></tr>${L("Mudi (Kha)",n(C.grocM))}<tr><td class="t">JALANI</td><td>${I(py.jal,"setPy('jal',this.value)")}</td></tr>${L("SHG HON",n(Y.hon))}<tr><td class="t">SHG MARKET</td><td>${I(py.shgm,"setPy('shgm',this.value)")}</td></tr><tr><td class="t">Chicken</td><td>${I(py.chk,"setPy('chk',this.value)")}</td></tr>${L("SABJI+Chicken",n(C.sabM))}${O(py.oth,"setPyO","delPyO")}<tr class="noprint"><td colspan="2"><button class="mb" onclick="addPyO()">+ Add payment line</button></td></tr>${L("<b>Total</b>","<b>"+f2(Y.pt)+"</b>","tot")}${L("<b>Excess / Deficit</b>",`<b class="${Y.exc>=0?"ok":"bad"}">${f2(Y.exc)}</b>`)}${bfRows(Y)}</table>`;
+ return `<div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:14px"><div style="flex:1 1 320px;min-width:0">${A}</div><div style="flex:1 1 320px;min-width:0">${B}</div></div>${bfTable()}${Math.abs(Y.gt-Y.cm)>=0.5?`<p class="bad noprint">Voucher grand total ${f2(Y.gt)} ≠ claimed ${f2(Y.cm)} – check Form K / Dashboard.</p>`:""}<p class="noprint"><small>Voucher side comes from Form K amounts (SABJI = vegetable + egg + others, less any Chicken / other vouchers you enter). Payment side: Mudi (Kha) and SABJI+Chicken are the Bill P1 Material totals; the other payment lines are typed.</small></p>`}
 
 function obcb(C){const c=S.cfg,neg=Math.abs(C.T.rcb)>=0.5&&C.T.rcb<0;return `<div class="obcb"><div class="oc ob"><i>🌾</i><small>RICE OPENING BAL (OB)</small><b>${f2(c.ob)} <u>kg</u></b></div><div class="oc cb"><i>🌾</i><small>RICE CLOSING BAL (CB)</small><b>${f2(C.T.cb)} <u>kg</u></b></div><div class="oc ob"><i>₹</i><small>₹ OPENING BAL (OB)</small><b>₹ ${f2(c.obRs||0)}</b></div><div class="oc cb${neg?" neg":""}"><i>₹</i><small>₹ CLOSING BAL (CB)</small><b>₹ ${f2(C.T.rcb)}</b></div></div>`}
 function go(){const y=window.scrollY;save();draw();window.scrollTo(0,y)}
@@ -347,7 +366,7 @@ function draw(){drawM();const C=calc(),L=checks(C),c=S.cfg;
  </div><div style="display:flex;justify-content:space-between;margin-top:10px"><span>Signature of the SMC Chairperson / Gram Pradhan</span><span>Signature of Head Teacher</span></div></div>`;
 
  // DASH
- const Ys=synCalc(C),sc=(a,b,cl)=>`<div class="chip"><small>${a}</small><b class="${cl||""}">${b}</b></div>`,snapHTML=`<div class="snapt">Month snapshot</div><div class="snap">${sc("Rice OB (kg)",f2(c.ob))}${sc("Rice received",f2(c.recv))}${sc("Rice used",f2(C.T.rT))}${sc("Rice CB (kg)",f2(C.T.cb))}${sc("₹ OB",f2(c.obRs||0))}${sc("₹ Cooking cost (rounded)",f0(C.T.sT))}${sc("₹ Spent",f2(C.T.exp))}${sc("₹ CB",f2(C.T.rcb))}${sc("Claimed ₹",f0(Ys.cm))}${sc("Excess / Deficit ₹",f2(Ys.exc),Ys.exc>=0?"ok":"bad")}</div>`;
+ const Ys=synCalc(C),sc=(a,b,cl)=>`<div class="chip"><small>${a}</small><b class="${cl||""}">${b}</b></div>`,snapHTML=`<div class="snapt">Month snapshot</div><div class="snap">${sc("Rice OB (kg)",f2(c.ob))}${sc("Rice received",f2(c.recv))}${sc("Rice used",f2(C.T.rT))}${sc("Rice CB (kg)",f2(C.T.cb))}${sc("₹ OB",f2(c.obRs||0))}${sc("₹ Cooking cost (rounded)",f0(C.T.sT))}${sc("₹ Spent",f2(C.T.exp))}${sc("₹ CB",f2(C.T.rcb))}${sc("Claimed ₹",f0(Ys.cm))}${sc("Excess / Deficit ₹",f2(Ys.exc),Ys.exc>=0?"ok":"bad")}${BF.ym===c.ym&&BF.list.length?sc("B/F ("+shortM(BF.from)+(BF.from===BF.to?"":" to "+shortM(BF.to))+")",f2(BF.amt),BF.amt>=0?"ok":"bad")+sc("Net Exc / Def ₹",f2(R(Ys.exc+BF.amt)),Ys.exc+BF.amt>=0?"ok":"bad"):""}</div>`;
  const nS=S.days.filter(d=>isSun(d.date)).length,nH=S.days.filter(d=>d.hol&&!isSun(d.date)).length,kp=(a,b,cl)=>`<div class="card" style="min-width:120px;flex:1;margin:0"><div style="font-size:11px;color:#555">${a}</div><div style="font-size:20px;font-weight:700" class="${cl||""}">${b}</div></div>`;
  let Dd=H("Dashboard – Mid Day Meal")+obcb(C)+`<div class="ban ${L.length?"bad":"ok"}">${L.length?"✘ UNMATCHED – "+L.length+" mismatch(es), see Report":"✔ ALL MATCHED"}</div>${snapHTML}<div class="row" style="align-items:stretch;margin-bottom:10px">`+kp("Calendar days",S.days.length)+kp("Sundays",nS)+kp("Other holidays",nH)+kp("Serving days",C.T.days)+kp("Avg attendance",C.T.att.toFixed(1)+"%")+kp("Meals served",C.T.pV+C.T.pU)+kp("P1 Total EXP",f0(C.T.exp))+kp("Rice closing (kg)",f2(C.T.cb))+kp("Unmatched",L.length,L.length?"bad":"ok")+`</div>
  <table style="min-width:900px;max-width:1100px"><colgroup><col style="width:90px"><col style="width:90px"><col style="width:170px"><col style="width:70px"><col style="width:70px"><col style="width:150px"><col style="width:90px"><col style="width:90px"><col style="width:50px"><col class="noprint" style="width:110px"></colgroup>
@@ -413,7 +432,7 @@ async function openMonth(ym,first){
    if(!confirm(msg)){uiStatus();return}
    S=newMonth(base,ym,cl);REV=0;dirty=true;BUSY=false;await saveMonth(true);BUSY=true}
  }catch(e){alert("Could not open month: "+e.message)}finally{BUSY=false}
- draw();uiStatus()}
+ draw();uiStatus();loadBF()}
 async function gotoMonth(ym){if(!ym||ym===S.cfg.ym)return;if(dirty&&!confirm("Unsaved changes will be lost. Continue?")){uiStatus();return}dirty=false;await openMonth(ym)}
 function stepMonth(d){gotoMonth(shift(S.cfg.ym,d))}
 async function saveMonth(quiet){
@@ -501,8 +520,11 @@ function legacyPatch(wb,XL){
  const sr={};[14,15,16,17].forEach(i=>sr[i]=std[i]||[]);
  const enrol=[[0,0,0,0,0,0,0,0,0,0]].concat([14,15,16,17].map(i=>{const r=sr[i];return[N(r[4]),N(r[3]),N(r[5])+N(r[7]),N(r[6])+N(r[8]),N(r[2]),0,0,0,0,0]}));
  const ifa=N((md[42]||[])[10]);
+ let pay={jal:0,shgm:0,chk:0,oth:[]};try{const p2=A("BILL-P2"),std=["mudi (kha)","jalani","shg hon","shg market","chicken","sabji+chicken","total","excess/deficit",""];
+  for(let i=12;i<p2.length;i++){const r=p2[i],l=String(r[12]||"").replace(/\s+/g," ").trim(),k=l.toLowerCase(),v=r2(N(r[13]));if(!l||l==="Actually Paid/to be paid")continue;
+   if(k==="jalani")pay.jal=v;else if(k==="shg market")pay.shgm=v;else if(k==="chicken")pay.chk=v;else if(std.indexOf(k)<0&&v)pay.oth.push({l,a:v})}}catch(e){}
  const kTotX=N((fk[34]||[])[3]);
- return{ym,cfg,days,ext,enrol,ifa,xl:{kTot:kTotX}}}
+ return{ym,cfg,days,ext,enrol,ifa,pay,xl:{kTot:kTotX}}}
 
 /* ===== Import / Export (JSON + old Excel workbooks) ===== */
 function dl(name,txt){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"application/json"}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},600)}
@@ -516,7 +538,7 @@ async function impXls(inp){if(!isAdm())return;if(typeof XLSX==="undefined"){aler
  const fs=[...inp.files];inp.value="";const items=[],errs=[];
  for(const f of fs){try{const wb=XLSX.read(await f.arrayBuffer(),{type:"array"});const p=legacyPatch(wb,XLSX);items.push({ym:p.ym,patch:p,src:f.name})}catch(e){errs.push(f.name+": "+e.message)}}
  await impReview(items,errs)}
-function fromPatch(p,base){const B=newMonth(base,p.ym,null),c=clone(p.cfg);if(!c.year)delete c.year;Object.assign(B.cfg,c);B.cfg.obRs=0;B.days=clone(p.days);B.ext=clone(p.ext);B.enrol=clone(p.enrol);B.ifa=p.ifa||0;B.locked=false;B.lock=null;return B}
+function fromPatch(p,base){const B=newMonth(base,p.ym,null),c=clone(p.cfg);if(!c.year)delete c.year;Object.assign(B.cfg,c);B.cfg.obRs=0;B.days=clone(p.days);B.ext=clone(p.ext);B.enrol=clone(p.enrol);B.ifa=p.ifa||0;B.pay=clone(p.pay||{jal:0,shgm:0,chk:0,oth:[]});B.syn={chk:0,oth:[]};B.locked=false;B.lock=null;return B}
 function sumOf(st){const k=S;S=st;try{const C=calc();return{days:C.T.days,meals:C.T.pV+C.T.pU,claim:C.claim,kTot:C.kTot,rice:C.T.cb,rs:C.T.rcb,bad:checks(C).length}}finally{S=k}}
 let IMPQ=[];
 async function impReview(items,errs){
