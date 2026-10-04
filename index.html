@@ -3,6 +3,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{--b:#1a3a5c;--g:#1b7f3b;--r:#c0392b;--l:#e8eef5}
 *{box-sizing:border-box}body{font:13px/1.35 "Segoe UI",Arial,sans-serif;margin:0;color:#111;background:#f4f6f9}
@@ -472,8 +473,82 @@ function drawM(){
  <div class="mh" style="max-width:none;margin:0"><details><summary>💳 Payments &amp; vouchers (P2 synopsis)</summary><div class="g2" style="margin-top:8px"><label>Chicken (voucher)${mi(S.syn.chk||0,"setSy(this.value)")}</label><label>JALANI paid ₹${mi(S.pay.jal||0,"setPy('jal',this.value)")}</label><label>SHG market ₹${mi(S.pay.shgm||0,"setPy('shgm',this.value)")}</label><label>Chicken paid ₹${mi(S.pay.chk||0,"setPy('chk',this.value)")}</label></div>
  <div class="mini"><span>Mudi (Kha) ${f2(C.grocM)}</span><span>SABJI+Chicken ${f2(C.sabM)}</span></div>
  ${S.pay.oth.map((x,i)=>`<div class="g2" style="margin-top:6px"><label>Name<input class="tx" style="text-align:left" value="${esc(x.l)}" onchange="setPyO(${i},'l',this.value)"></label><label>₹ <button class="mb o" style="float:right;padding:2px 8px" onclick="delPyO(${i})">✕</button>${mi(x.a||0,`setPyO(${i},'a',this.value)`)}</label></div>`).join("")}
- <button class="mb" style="margin-top:8px" onclick="addPyO()">+ Add payment line</button><div class="mini"><span>Total paid ${f2(Y.pt)}</span><span>Claimed ${f0(Y.cm)}</span></div></details></div></div>`;
+ <button class="mb" style="margin-top:8px" onclick="addPyO()">+ Add payment line</button><div class="mini"><span>Total paid ${f2(Y.pt)}</span><span>Claimed ${f0(Y.cm)}</span></div></details></div>${ioUI(adm)}</div>`;
  el.innerHTML=h+t+setup+`<div id="sst"></div></div>`;uiStatus()}
+
+function legacyPatch(wb,XL){
+ const A=n=>{const nm=Object.keys(wb.Sheets).find(k=>k.trim().toLowerCase()===n.toLowerCase());if(!nm)throw new Error('Sheet "'+n+'" not found – this is not an MDM workbook');return XL.utils.sheet_to_json(wb.Sheets[nm],{header:1,raw:true,defval:""})};
+ const N=v=>{const x=parseFloat(v);return isFinite(x)?x:0},r2=x=>Math.round(x*100)/100;
+ const pad=n=>String(n).padStart(2,"0");
+ const ser=s=>{const d=new Date(Math.round((s-25569)*86400)*1000);return d.getUTCFullYear()+"-"+pad(d.getUTCMonth()+1)+"-"+pad(d.getUTCDate())};
+ const cal=A("Calculation"),dr=A("DR"),mat=A("Material"),fk=A("FormK"),std=A("STD");let md=[];try{md=A("MDCF")}catch(e){}
+ const ms=cal[0]&&cal[0][7];if(!(ms>40000))throw new Error("Month not found in Calculation sheet");
+ const ym=ser(ms).slice(0,7),[Y,M]=ym.split("-").map(Number),nd=new Date(Y,M,0).getDate();
+ const cfg={ym,year:String(cal[1][7]||""),rcV:N(cal[4][2])/1000,rcU:N(cal[5][2])/1000,rsV:N(cal[2][2]),rsU:N(cal[3][2]),hon:N(cal[6][2]),
+  obV:r2(N(cal[6][5])),recvV:r2(N(cal[8][5]))};
+ cfg.ob=r2(N(cal[6][5])+N(cal[7][5]));cfg.recv=r2(N(cal[8][5])+N(cal[9][5]));
+ const MK=["veg","egg","pulse","oil","soy","oth","spice"],mc={veg:2,egg:4,pulse:6,oil:8,soy:10,oth:12,spice:14};
+ const mrow={};mat.forEach(r=>{if(N(r[1])>40000){const m={};MK.forEach(k=>m[k]=[r2(N(r[mc[k]])),r2(N(r[mc[k]+1]))]);mrow[ser(N(r[1]))]=m}});
+ const drow={};dr.forEach(r=>{if(N(r[0])>0&&N(r[1])>40000){const cp=[2,3,4,5].map(i=>N(r[i])),mt=[6,7,8,9].map(i=>N(r[i]));if(cp.concat(mt).some(x=>x>0))drow[ser(N(r[1]))]={cp,mt,menu:String(r[16]||"").trim()}}});
+ const blank=()=>{const o={};MK.forEach(k=>o[k]=[0,0]);return o};
+ const days=[];for(let i=1;i<=nd;i++){const date=ym+"-"+pad(i),w=new Date(date+"T00:00:00").getDay(),d=drow[date];
+  if(!d)days.push({date,cp:[0,0,0,0],mt:[0,0,0,0],exp:0,menu:"",m:blank(),hol:true,why:w==0?"Sunday":"No MDM"});
+  else{const m=mrow[date]||blank();days.push({date,cp:d.cp,mt:d.mt,exp:r2(MK.reduce((a,k)=>a+m[k][1],0)),menu:d.menu,m,hol:false})}}
+ const mt={};MK.forEach(k=>mt[k]=[r2(days.reduce((a,d)=>a+d.m[k][0],0)),r2(days.reduce((a,d)=>a+d.m[k][1],0))]);
+ const fr={veg:25,egg:26,pulse:27,oil:28,spice:29,soy:30,oth:32},ext={};
+ MK.forEach(k=>{const r=fk[fr[k]]||[];ext[k]=[Math.max(0,r2(N(r[3])-mt[k][0])),Math.max(0,r2(N(r[5])-mt[k][1]))]});
+ ext.fuel=[r2(N((fk[31]||[])[3])),r2(N((fk[31]||[])[5]))];cfg.fuelQ=ext.fuel[0];cfg.fuelA=ext.fuel[1];
+ const sr={};[14,15,16,17].forEach(i=>sr[i]=std[i]||[]);
+ const enrol=[[0,0,0,0,0,0,0,0,0,0]].concat([14,15,16,17].map(i=>{const r=sr[i];return[N(r[4]),N(r[3]),N(r[5])+N(r[7]),N(r[6])+N(r[8]),N(r[2]),0,0,0,0,0]}));
+ const ifa=N((md[42]||[])[10]);
+ const kTotX=N((fk[34]||[])[3]);
+ return{ym,cfg,days,ext,enrol,ifa,xl:{kTot:kTotX}}}
+
+/* ===== Import / Export (JSON + old Excel workbooks) ===== */
+function dl(name,txt){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"application/json"}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},600)}
+function expJson(){const st=clone(S);dl("MDM_TFHS_"+st.cfg.ym+".json",JSON.stringify({app:"TFHS-MDM",v:1,exported:new Date().toISOString(),months:{[st.cfg.ym]:st}}))}
+async function expJsonAll(){if(!isAdm())return;try{const q=await db.collection(COL).get(),months={};q.forEach(d=>{try{const st=JSON.parse(d.data().json);months[st.cfg.ym||d.id]=st}catch(e){}});months[S.cfg.ym]=clone(S);const n=Object.keys(months).length;dl("MDM_TFHS_ALL_"+new Date().toISOString().slice(0,10)+".json",JSON.stringify({app:"TFHS-MDM",v:1,exported:new Date().toISOString(),months}));toast(n+" month(s) exported ✔")}catch(e){alert("Export failed: "+e.message)}}
+const okSt=st=>st&&st.cfg&&/^\d{4}-\d{2}$/.test(st.cfg.ym||"")&&Array.isArray(st.days);
+async function impJson(inp){if(!isAdm())return;const fs=[...inp.files];inp.value="";const items=[],errs=[];
+ for(const f of fs){try{const j=JSON.parse(await f.text());const ms=j.months||(okSt(j)?{[j.cfg.ym]:j}:null);if(!ms)throw new Error("not an MDM export file");for(const k in ms){if(okSt(ms[k]))items.push({ym:ms[k].cfg.ym,st:ms[k],src:f.name});else errs.push(f.name+" ["+k+"]: invalid month data")}}catch(e){errs.push(f.name+": "+e.message)}}
+ await impReview(items,errs)}
+async function impXls(inp){if(!isAdm())return;if(typeof XLSX==="undefined"){alert("Excel reader could not load – check internet connection and reload.");return}
+ const fs=[...inp.files];inp.value="";const items=[],errs=[];
+ for(const f of fs){try{const wb=XLSX.read(await f.arrayBuffer(),{type:"array"});const p=legacyPatch(wb,XLSX);items.push({ym:p.ym,patch:p,src:f.name})}catch(e){errs.push(f.name+": "+e.message)}}
+ await impReview(items,errs)}
+function fromPatch(p,base){const B=newMonth(base,p.ym,null),c=clone(p.cfg);if(!c.year)delete c.year;Object.assign(B.cfg,c);B.cfg.obRs=0;B.days=clone(p.days);B.ext=clone(p.ext);B.enrol=clone(p.enrol);B.ifa=p.ifa||0;B.locked=false;B.lock=null;return B}
+function sumOf(st){const k=S;S=st;try{const C=calc();return{days:C.T.days,meals:C.T.pV+C.T.pU,claim:C.claim,kTot:C.kTot,rice:C.T.cb,rs:C.T.rcb,bad:checks(C).length}}finally{S=k}}
+let IMPQ=[];
+async function impReview(items,errs){
+ if(!items.length){alert(errs.length?"Nothing to import:\n"+errs.join("\n"):"No months found.");return}
+ const seen={};items.forEach(x=>seen[x.ym]=x);items=Object.keys(seen).sort().map(k=>seen[k]);
+ const base=clone(S);
+ for(const x of items){
+  if(x.patch){x.st=fromPatch(x.patch,base);const pv=shift(x.ym,-1),pb=items.find(y=>y.ym===pv);let ps=pb?pb.st:null;if(!ps){try{const g=await getMonth(pv);if(g&&!g.virtual)ps=g.st}catch(e){}}if(ps)x.st.cfg.obRs=closing(ps).rs}
+  try{const g=await db.collection(COL).doc(x.ym).get();x.exists=g.exists;x.locked=g.exists&&!!g.data().locked}catch(e){x.exists=false;x.locked=false}
+  x.sum=sumOf(x.st)}
+ IMPQ=items;const old=document.getElementById("impm");if(old)old.remove();
+ const d=document.createElement("div");d.id="impm";d.style.cssText="position:fixed;inset:0;background:#0007;z-index:200;display:flex;align-items:center;justify-content:center;padding:10px";
+ d.innerHTML=`<div style="background:#fff;border-radius:14px;max-width:760px;width:100%;max-height:92vh;overflow:auto;padding:14px 16px;box-shadow:0 8px 30px #0006"><h3 style="margin:0 0 4px">Import months</h3><div style="font-size:12px;color:#555;margin-bottom:8px">Tick the month(s) to import – one by one or all at a time. Existing months are overwritten; locked months are skipped.</div>
+ <div style="overflow:auto"><table style="min-width:640px;table-layout:auto"><tr><th><input type="checkbox" checked onchange="IMPQ.forEach((x,i)=>{const e=document.getElementById('ic'+i);if(e&&!e.disabled)e.checked=this.checked})"></th><th>Month</th><th>Days</th><th>Meals</th><th>Claimed ₹</th><th>Form K ₹</th><th>Rice CB</th><th>₹ OB</th><th>Status</th></tr>`+
+ items.map((x,i)=>`<tr><td class="c"><input type="checkbox" id="ic${i}" ${x.locked?"disabled":"checked"}></td><td class="t"><b>${mname(x.ym)}</b><br><small>${esc(x.src||"")}</small></td><td class="n">${x.sum.days}</td><td class="n">${x.sum.meals}</td><td class="n">${f0(x.sum.claim)}</td><td class="n">${f0(x.sum.kTot)}</td><td class="n">${f2(x.sum.rice)}</td><td class="n">${f2(x.st.cfg.obRs||0)}</td><td class="c ${x.locked?"bad":x.sum.bad?"bad":"ok"}">${x.locked?"🔒 locked – skip":(x.exists?"overwrite":"new")+(x.sum.bad?" · "+x.sum.bad+" mismatch":" · ✔")}</td></tr>`).join("")+
+ `</table></div>${errs.length?`<div class="bad" style="margin-top:8px;font-size:12px;white-space:pre-wrap">${esc(errs.join("\n"))}</div>`:""}
+ <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button class="mb o" onclick="document.getElementById('impm').remove()">Cancel</button><button class="mb" id="impgo" onclick="impRun()">⬆ Import selected</button></div></div>`;
+ document.body.appendChild(d)}
+async function impSave(st){const cl=closing(st),ref=db.collection(COL).doc(st.cfg.ym);
+ await db.runTransaction(async t=>{const g=await t.get(ref),srv=g.exists?(g.data().rev||0):0;if(g.exists&&g.data().locked)throw new Error("month is locked");
+  t.set(ref,{ym:st.cfg.ym,json:JSON.stringify(st),closeRice:cl.rice,closeRiceV:cl.riceV,closeRs:cl.rs,rev:srv+1,locked:!!st.locked,lockedBy:(st.locked&&st.lock?st.lock.by:""),updatedBy:ME.email,updatedAt:firebase.firestore.FieldValue.serverTimestamp()})})}
+async function impRun(){if(!isAdm()||!ME)return;const sel=IMPQ.filter((x,i)=>{const e=document.getElementById("ic"+i);return e&&e.checked&&!x.locked});
+ if(!sel.length){alert("Nothing selected.");return}
+ if(!confirm("Import "+sel.length+" month(s): "+sel.map(x=>mname(x.ym)).join(", ")+"?\n\nExisting data of these months will be replaced."))return;
+ const b=document.getElementById("impgo");if(b){b.disabled=true;b.textContent="Importing…"}
+ const ok=[],bad=[];for(const x of sel){try{await impSave(x.st);ok.push(mname(x.ym))}catch(e){bad.push(mname(x.ym)+": "+(/permission/i.test(e.message)?"refused by Firestore rules":e.message))}}
+ const m=document.getElementById("impm");if(m)m.remove();
+ await openMonth(S.cfg.ym);
+ alert((ok.length?"Imported: "+ok.join(", "):"Nothing imported.")+(bad.length?"\n\nFailed:\n"+bad.join("\n"):""))}
+function ioUI(adm){const bt="display:block;text-align:center;cursor:pointer;padding:8px 10px;border-radius:8px;background:#1a5fa8;color:#fff;font-weight:600";
+ return `<div class="mh" style="max-width:none;margin:0"><details><summary>💾 Import / Export (JSON &amp; Excel)</summary><div style="margin-top:8px;display:grid;gap:8px"><button class="mb" onclick="expJson()">⬇ Export this month (JSON)</button>`+
+ (adm?`<button class="mb" onclick="expJsonAll()">⬇ Export ALL months (JSON)</button><label style="${bt}">⬆ Import JSON (one or many files)<input type="file" accept=".json,application/json" multiple hidden onchange="impJson(this)"></label><label style="${bt};background:#1b7f3b">⬆ Import old Excel workbook(s) (.xls) – previous months<input type="file" accept=".xls,.xlsx" multiple hidden onchange="impXls(this)"></label><small>You can pick several files and then tick the months to import – one by one or all at a time. For Excel, rice opening balance comes from the workbook and ₹ opening balance is taken from the previous month.</small>`:`<small>Import is for admin only.</small>`)+`</div></details></div>`}
 
 showLogin();
 tab("m");
