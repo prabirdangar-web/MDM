@@ -150,11 +150,16 @@ nav .brand{display:none}#navsum{display:none}
 #p_c .srv td.mnu{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.15;overflow-wrap:anywhere}
 @media print{#p_c .srv td.mnu{font-size:7pt!important;padding:1px 3px!important}}
 @media print{#p_c .srv td.mnu.m1{font-size:6.5pt!important}#p_c .srv td.mnu.m2{font-size:6pt!important}#p_c .srv td.mnu.m3{font-size:5.5pt!important}}
+.lockban{background:#fff3d6;border:1px solid #e0b64d;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-weight:700;color:#7a5a00}
+#sbar #lk{background:#8e6a00;font-weight:700}#sbar #lk.lkd{background:#c0392b}#sbar #lk:disabled,#sbar #sv:disabled{opacity:.75}
+.ns-st.dr{background:#ffffff1a}
+body.locked .pg input:disabled,body.locked .pg select:disabled{background:#f1f3f6;color:#222;-webkit-text-fill-color:#222;opacity:1}
+@media print{.pg input:disabled,.pg select:disabled{color:#000!important;-webkit-text-fill-color:#000;opacity:1;background:none!important}.lockban{display:none}}
 </style></head><body>
 <div id="login"><form onsubmit="doLogin(event)"><h2>TFHS Mid Day Meal</h2><p>Sign in with your portal account (same login as the XI Exam portal).</p>
 <input id="le" type="email" placeholder="Email" autocomplete="username" required><input id="lp" type="password" placeholder="Password" autocomplete="current-password" required>
 <div id="lmsg"></div><button class="go" type="submit">Sign in</button><button type="button" class="lk" onclick="forgot()">Forgot password?</button></form></div>
-<div id="sbar" class="noprint"><button onclick="stepMonth(-1)">◀</button><input type="month" id="mon" onchange="gotoMonth(this.value)"><button onclick="stepMonth(1)">▶</button><button id="sv" onclick="saveMonth()">Save</button></div>
+<div id="sbar" class="noprint"><button onclick="stepMonth(-1)">◀</button><input type="month" id="mon" onchange="gotoMonth(this.value)"><button onclick="stepMonth(1)">▶</button><button id="sv" onclick="saveMonth()">Save</button><button id="lk" onclick="toggleLock()">🔒 Lock</button></div>
 <nav id="nav"></nav>
 <div class="pg" id="p_m"></div><div class="pg" id="p_dash"></div><div class="pg" id="p_entry"></div><div class="pg" id="p_mat"></div><div class="pg" id="p_p1"></div>
 <div class="pg" id="p_p2"></div><div class="pg" id="p_k"></div><div class="pg" id="p_c"></div><div class="pg" id="p_mdcf"></div><div class="pg" id="p_rep"></div>
@@ -343,7 +348,7 @@ function draw(){drawM();const C=calc(),L=checks(C),c=S.cfg;
  // REPORT
  $("p_rep").innerHTML=`<h3>Reconciliation Report – ${L.length?"UNMATCHED":"MATCHED"}</h3>`+(L.length?`<table style="max-width:900px"><tr><th style="width:34%">Where</th><th>A</th><th>B</th><th style="width:90px">Difference</th></tr>`+L.map(x=>`<tr class="bad"><td class="t">${x.w}</td><td class="t">${x.a}</td><td class="t">${x.b}</td><td class="n">${f0(x.d)}</td></tr>`).join("")+`</table>`:`<p class="ok">Everything matches.</p>`)+`<p class="noprint">Fix the entries (Daily Entry / Material) or Fuel; the report re-checks instantly.</p>`;
  document.querySelectorAll(".pg table").forEach(tb=>{const cs=[...tb.querySelectorAll(":scope>colgroup>col")];if(!cs.length)return;const w=cs.map(c=>parseFloat(c.style.width)||150),s=w.reduce((x,y)=>x+y,0);cs.forEach((c,i)=>c.style.width=(w[i]/s*100).toFixed(2)+"%")});
- document.querySelectorAll("#nav button.tab").forEach(b=>{const n=b.dataset.t=="rep"?L.length:0;b.dataset.t=="rep"&&(b.textContent="✅ Report ("+L.length+")")})}
+ document.querySelectorAll("#nav button.tab").forEach(b=>{const n=b.dataset.t=="rep"?L.length:0;b.dataset.t=="rep"&&(b.textContent="✅ Report ("+L.length+")")});applyLock()}
 const $=id=>document.getElementById(id),TABS=[["m","✏️ Daily Entry"],["dash","📊 Dashboard"],["p1","🧾 Bill P1"],["mat","🥕 Material"],["p2","💰 Bill P2"],["k","📄 Form K"],["c","📘 Form C"],["mdcf","📑 MDCF"],["rep","✅ Report"]];
 $("nav").innerHTML=`<div class="brand"><b>TFHS</b><small>Mid Day Meal</small></div>`+TABS.map(t=>`<button class="tab" data-t="${t[0]}" onclick="tab('${t[0]}')">${t[1]}</button>`).join("")+`<span class="sp"></span><div id="navsum"></div><button class="act" onclick="window.print()">🖨 Print</button><button class="act" onclick="logout()">⎋ Logout</button>`;
 function tab(t){document.querySelectorAll(".pg").forEach(p=>p.classList.toggle("on",p.id=="p_"+t));document.querySelectorAll("#nav .tab").forEach(b=>b.classList.toggle("on",b.dataset.t==t))}
@@ -374,12 +379,12 @@ async function startApp(){
  let ym=null;
  try{const q=await db.collection(COL).orderBy("ym","desc").limit(1).get();if(!q.empty)ym=q.docs[0].id}catch(e){console.error(e)}
  await openMonth(ym||DATA.cfg.ym,true);tab("m")}
-function uiStatus(){const b=$("sv");if(!b)return;b.textContent=dirty?"Save ●":"Save";b.classList.toggle("dirty",dirty);if($("mon")&&S)$("mon").value=S.cfg.ym}
+function uiStatus(){const b=$("sv");if(!b)return;const L=!!(S&&S.locked);b.textContent=L?"Locked":(dirty?"Save ●":"Save");b.classList.toggle("dirty",dirty&&!L);b.disabled=L;if($("mon")&&S)$("mon").value=S.cfg.ym;const k=$("lk");if(k){k.textContent=L?(isAdm()?"🔓 Unlock":"🔒 Locked"):"🔒 Lock";k.disabled=L&&!isAdm();k.classList.toggle("lkd",L)}}
 window.addEventListener("beforeunload",e=>{if(dirty){e.preventDefault();e.returnValue=""}});
 function closing(st){const k=S;S=st;try{const C=calc(),c=st.cfg;return{rice:C.T.cb,riceV:R(c.obV+c.recvV-C.T.rV),rs:C.T.rcb}}finally{S=k}}
 function newMonth(base,ym,cl){
  const[y,m]=ym.split("-").map(Number),n=new Date(y,m,0).getDate(),B=clone(base),blank=()=>{const o={};MT.forEach(x=>o[x[0]]=[0,0]);return o};
- B.cfg.ym=ym;B.cfg.monthName=MN[m-1];B.cfg.year=m>=4?y+"-"+String(y+1).slice(2):(y-1)+"-"+String(y).slice(2);
+ B.cfg.ym=ym;B.locked=false;B.lock=null;B.cfg.monthName=MN[m-1];B.cfg.year=m>=4?y+"-"+String(y+1).slice(2):(y-1)+"-"+String(y).slice(2);
  B.cfg.ob=cl?cl.rice:0;B.cfg.obV=cl?cl.riceV:0;B.cfg.obRs=cl?cl.rs:0;B.cfg.recv=0;B.cfg.recvV=0;B.cfg.fuelQ=0;B.cfg.fuelA=0;
  B.days=[...Array(n)].map((_,i)=>{const date=ym+"-"+String(i+1).padStart(2,"0");return{date,cp:[0,0,0,0],mt:[0,0,0,0],exp:0,menu:"",m:blank(),hol:new Date(date+"T00:00:00").getDay()==0}});
  B.ext=blank();B.ext.fuel=[0,0];B.rcpt=[];B.syn={chk:0,oth:[]};B.pay={jal:0,shgm:0,chk:0,oth:[]};if(B.cfg.diff==null)B.cfg.diff=5;Object.keys(B.mdcf).forEach(k=>B.mdcf[k]=k==="done"?"YES":"");B.ifa=0;B.wm=B.wm||clone(WM0);B.days.forEach(d=>{if(!d.hol)d.menu=wmEgg(wmDow(d.date),B.wm[wmDow(d.date)])});return B}
@@ -404,13 +409,28 @@ async function saveMonth(quiet){
  try{
   await db.runTransaction(async t=>{const d=await t.get(ref),srv=d.exists?(d.data().rev||0):0;
    if(srv!==REV)throw{conflict:true};
-   t.set(ref,{ym:S.cfg.ym,json:JSON.stringify(S),closeRice:cl.rice,closeRiceV:cl.riceV,closeRs:cl.rs,rev:srv+1,updatedBy:ME.email,updatedAt:firebase.firestore.FieldValue.serverTimestamp()})});
+   if(d.exists&&d.data().locked&&!(isAdm()&&!S.locked))throw{lockedSrv:true};
+   t.set(ref,{ym:S.cfg.ym,json:JSON.stringify(S),closeRice:cl.rice,closeRiceV:cl.riceV,closeRs:cl.rs,rev:srv+1,locked:!!S.locked,lockedBy:(S.locked&&S.lock?S.lock.by:""),updatedBy:ME.email,updatedAt:firebase.firestore.FieldValue.serverTimestamp()})});
   REV++;dirty=false;if(!quiet)toast("Saved ✔")
  }catch(e){
-  if(e.conflict){if(confirm("Someone else saved this month after you opened it.\nOK = reload their version (your unsaved edits are lost)\nCancel = keep editing"))await openMonth(S.cfg.ym)}
+  if(e.lockedSrv){alert("This month is finalized and locked. Only admin can unlock it.");await openMonth(S.cfg.ym)}
+  else if(e.conflict){if(confirm("Someone else saved this month after you opened it.\nOK = reload their version (your unsaved edits are lost)\nCancel = keep editing"))await openMonth(S.cfg.ym)}
   else alert(/permission/i.test(e.message)?"Save refused by Firestore rules. Ask the admin to publish the mdmMonths rule.":"Save failed: "+e.message)
  }finally{b.disabled=false;uiStatus()}}
 function toast(t){const e=document.createElement("div");e.textContent=t;e.style.cssText="position:fixed;left:50%;bottom:76px;transform:translateX(-50%);background:#1b7f3b;color:#fff;padding:8px 16px;border-radius:20px;z-index:60;font-weight:700";document.body.appendChild(e);setTimeout(()=>e.remove(),1800)}
+async function toggleLock(){
+ if(!ME||BUSY||!S)return;
+ const want=!S.locked,pv={l:S.locked,k:S.lock};
+ if(want){const n=checks(calc()).length;
+  if(!confirm("FINALIZE & LOCK "+mname(S.cfg.ym)+"?\n\nAfter locking, no data entry or saving is possible.\nOnly the admin can unlock it."+(n?"\n\n⚠ "+n+" mismatch(es) still exist.":"")))return;
+  S.locked=true;S.lock={by:ME.email,at:new Date().toISOString()}}
+ else{if(!isAdm()){alert("Only admin can unlock a finalized month.");return}
+  if(!confirm("Unlock "+mname(S.cfg.ym)+" for editing?"))return;
+  S.locked=false;S.lock=null}
+ dirty=true;await saveMonth(true);
+ if(dirty){S.locked=pv.l;S.lock=pv.k}else if(S.locked===want)toast(want?"Month locked 🔒":"Month unlocked 🔓");
+ draw();uiStatus()}
+function applyLock(){const L=!!(S&&S.locked);document.body.classList.toggle("locked",L);if(!L)return;document.querySelectorAll(".pg input,.pg select,.pg textarea,.pg button").forEach(e=>{e.disabled=true})}
 async function refreshOB(){
  if(!isAdm())return;const pv=shift(S.cfg.ym,-1);
  try{const p=await getMonth(pv);if(!p){alert(mname(pv)+" is not saved yet.");return}
@@ -425,9 +445,9 @@ function drawM(){
  mi=(v,fn,dis,cls)=>`<input type="number" inputmode="decimal" step="any" class="${cls||""}" value="${v}" ${dis?"disabled":""} onfocus="this.select()" onchange="${fn}">`,
  fld=(lab,k,dis)=>`<label>${lab}${mi(c[k]||0,`setC('${k}',this.value)`,dis)}</label>`,
  ci=(v,fn,cls)=>`<input type="number" inputmode="decimal" step="any" class="${cls||""}" value="${v}" onfocus="this.select()" onchange="${fn}">`;
- const ns=$("navsum");if(ns)ns.innerHTML=`<div class="ns-h">${c.monthName} ${c.ym.slice(0,4)}</div><div class="ns-r"><span>Rice CB</span><b>${f2(C.T.cb)} kg</b></div><div class="ns-r"><span>₹ CB</span><b>${f2(C.T.rcb)}</b></div><div class="ns-r"><span>Claimed</span><b>${f0(Y.cm)}</b></div><div class="ns-r"><span>Exc / Def</span><b class="${Y.exc>=0?"gk":"rk"}">${f2(Y.exc)}</b></div><div class="ns-st ${L.length?"bad":"ok"}">${L.length?"✘ "+L.length+" mismatch(es)":"✔ All matched"}</div>`;
+ const ns=$("navsum");if(ns)ns.innerHTML=`<div class="ns-h">${c.monthName} ${c.ym.slice(0,4)}</div><div class="ns-r"><span>Rice CB</span><b>${f2(C.T.cb)} kg</b></div><div class="ns-r"><span>₹ CB</span><b>${f2(C.T.rcb)}</b></div><div class="ns-r"><span>Claimed</span><b>${f0(Y.cm)}</b></div><div class="ns-r"><span>Exc / Def</span><b class="${Y.exc>=0?"gk":"rk"}">${f2(Y.exc)}</b></div><div class="ns-st ${L.length?"bad":"ok"}">${L.length?"✘ "+L.length+" mismatch(es)":"✔ All matched"}</div><div class="ns-st ${S.locked?"bad":"dr"}">${S.locked?"🔒 LOCKED":"✏ Draft – editable"}</div>`;
  const live=S.days.filter(d=>!d.hol),sm=k=>live.reduce((a,d)=>a+(+d[k]||0),0),sj=(k,j)=>live.reduce((a,d)=>a+(+d[k][j]||0),0);
- let h=`<div class="ent"><div class="ent-top"><div><div class="ent-t">Daily entry</div><div class="ent-s">${c.monthName} ${c.ym.slice(0,4)} · ${C.T.days} serving days · ${C.T.pV+C.T.pU} meals · ₹${f0(C.T.exp)} spent · full summary on the Dashboard</div></div><div class="ent-r"><span class="pill ${L.length?"bad":"ok"}">${L.length?"✘ "+L.length+" mismatch(es)":"✔ All matched"}</span><label class="pctb">MDM taken % (all days)<input type="number" inputmode="decimal" step="any" placeholder="e.g. 90" onchange="pctAll(this.value)"></label></div></div>`;
+ let h=`<div class="ent"><div class="ent-top"><div><div class="ent-t">Daily entry</div><div class="ent-s">${c.monthName} ${c.ym.slice(0,4)} · ${C.T.days} serving days · ${C.T.pV+C.T.pU} meals · ₹${f0(C.T.exp)} spent · full summary on the Dashboard</div></div><div class="ent-r"><span class="pill ${S.locked?"bad":"ok"}">${S.locked?"🔒 Locked":"✏ Draft"}</span><span class="pill ${L.length?"bad":"ok"}">${L.length?"✘ "+L.length+" mismatch(es)":"✔ All matched"}</span><label class="pctb">MDM taken % (all days)<input type="number" inputmode="decimal" step="any" placeholder="e.g. 90" onchange="pctAll(this.value)"></label></div></div>${S.locked?`<div class="lockban">🔒 This month is finalized and locked${S.lock?" by "+S.lock.by+" on "+new Date(S.lock.at).toLocaleString("en-GB"):""}. Data entry and saving are disabled — only admin can unlock it.</div>`:""}`;
  let t=`<div class="ecard"><h3>Day-wise entry <small>— one line per date · Present, MDM taken, expense and menu</small></h3><div class="dwrap" style="border:0;border-radius:0;margin:0"><table class="dt"><thead><tr><th class="sc" rowspan="2">Date</th><th rowspan="2">MDM<br>%</th><th colspan="4">Present</th><th colspan="4">MDM taken</th><th rowspan="2">Exp ₹</th><th rowspan="2">Att%</th><th rowspan="2">Menu</th><th rowspan="2"></th></tr><tr><th>V</th><th>VI</th><th>VII</th><th>VIII</th><th>V</th><th>VI</th><th>VII</th><th>VIII</th></tr></thead><tbody>`;
  C.D.forEach((o,i)=>{const d=S.days[i],wd=new Date(d.date+"T00:00:00").toLocaleDateString("en-GB",{weekday:"short"}),day=d.date.slice(8),dc=`<td class="sc"><b>${day}</b> ${wd}</td>`,tc=d.date===today?" today":"";
   if(o.hol){t+=`<tr class="hl${tc}">${dc}<td colspan="12" style="text-align:left">${isSun(d.date)?"Sunday":(d.why||"Holiday")}</td><td><button class="mb o" onclick="togHol(${i})">Work</button></td></tr>`;return}
