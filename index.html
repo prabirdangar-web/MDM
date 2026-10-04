@@ -194,7 +194,8 @@ function calc(){ens();const c=S.cfg,en=S.enrol.reduce((a,r)=>a+r.reduce((x,y)=>x
  T.days=D.filter(o=>!o.hol).length;T.att=T.days&&en?R(D.reduce((a,o)=>a+o.cpT,0)/(T.days*en)*100):0;T.cb=R(c.ob+c.recv-T.rT);T.rcb=R((+c.obRs||0)+T.sT-T.exp);
  const mt={};MT.forEach(m=>{mt[m[0]]=[R(S.days.filter(d=>!d.hol).reduce((a,d)=>a+(+d.m[m[0]][0]||0),0)),R(S.days.filter(d=>!d.hol).reduce((a,d)=>a+(+d.m[m[0]][1]||0),0))]});
  const E=S.ext,kv={};MT.forEach(m=>kv[m[0]]=[R(mt[m[0]][0]+(+E[m[0]][0]||0)),R(mt[m[0]][1]+(+E[m[0]][1]||0))]);const fuel=[+E.fuel[0]||0,+E.fuel[1]||0];const kTot=R(Object.values(kv).reduce((a,v)=>a+v[1],0)+fuel[1]+(+c.hon||0));
- return{D,T,mt,kv,fuel,kTot,claim:Math.round(T.sT+(+c.hon||0)),grocM:R(mt.pulse[1]+mt.oil[1]+mt.soy[1]+mt.spice[1]),sabM:R(mt.veg[1]+mt.egg[1]+mt.oth[1]),en}}
+ const claimR=Math.round(T.sT+(+c.hon||0));T.rcb=R((+c.obRs||0)+claimR-kTot);{const sv=D.filter(o=>!o.hol);if(sv.length)sv[sv.length-1].rcb=T.rcb}
+ return{D,T,mt,kv,fuel,kTot,claim:claimR,grocM:R(mt.pulse[1]+mt.oil[1]+mt.soy[1]+mt.spice[1]),sabM:R(mt.veg[1]+mt.egg[1]+mt.oth[1]),en}}
 function checks(C){const L=[],cm=Math.round(C.claim);
  C.D.forEach(o=>{if(!o.ok&&!o.hol)L.push({w:"Day "+dt(o.date),a:"P1 total exp "+f2(o.exp),b:"Material sum "+f2(o.mat),d:o.diff})});
  if(Math.abs(C.kTot-cm)>=0.5)L.push({w:"Form K total vs Claimed amount (P2)",a:"Form K "+f0(C.kTot),b:"Claimed "+f0(cm),d:R(C.kTot-cm)});
