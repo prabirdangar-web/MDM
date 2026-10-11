@@ -1,4 +1,12 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#1a3a5c">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TFHS MDM">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>TFHS MDM – P1 / P2 / Form K</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -173,6 +181,19 @@ body.allok .xq,body.allok .xa,body.allok .pc,.p2g.p2ok input:not(.tx),.p2g.p2ok 
 @media print{.xq,.xa,.pc,.p2g input:not(.tx),.p2g .cmv{background:transparent!important;color:#000!important}}
 #p_p1 td.pe,#p_p1 input.pe{background:#0b5d1e!important;color:#fff!important;font-weight:900!important;font-size:15px!important}
 @media print{#p_p1 td.pe,#p_p1 input.pe{background:transparent!important;color:#000!important}}
+
+/* mobile page dropdown + installed-app comfort */
+#tabSel{display:none}
+@media screen and (max-width:700px){
+ nav{align-items:center;gap:6px;padding:8px 8px}
+ nav .tab{display:none}
+ #tabSel{display:block;flex:1;min-width:0;padding:11px 12px;font-size:16px;font-weight:700;border:0;border-radius:8px;background:#fff;color:var(--b)}
+ nav .act{padding:10px 12px;font-size:15px}
+ nav .sp,#navsum{display:none}
+ #sbar{padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
+ body{padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))}
+}
+@media print{#tabSel{display:none!important}}
 </style><style id="formk-print-fit">
 /* Form-K: full A4 portrait fit, even gaps, larger rows/fonts, seal space */
 @media print{
@@ -425,7 +446,8 @@ function draw(){drawM();const C=calc(),L=checks(C),c=S.cfg;document.body.classLi
  document.querySelectorAll("#nav button.tab").forEach(b=>{const n=b.dataset.t=="rep"?L.length:0;b.dataset.t=="rep"&&(b.textContent="✅ Report ("+L.length+")")});applyLock()}
 const $=id=>document.getElementById(id),TABS=[["m","✏️ Daily Entry"],["dash","📊 Dashboard"],["p1","🧾 Bill P1"],["mat","🥕 Material"],["p2","💰 Bill P2"],["k","📄 Form K"],["c","📘 Form C"],["mdcf","📑 MDCF"],["rep","✅ Report"]];
 $("nav").innerHTML=`<div class="brand"><b>TFHS</b><small>Mid Day Meal</small></div>`+TABS.map(t=>`<button class="tab" data-t="${t[0]}" onclick="tab('${t[0]}')">${t[1]}</button>`).join("")+`<span class="sp"></span><div id="navsum"></div><button class="act" onclick="window.print()">🖨 Print</button><button class="act" onclick="logout()">⎋ Logout</button>`;
-function tab(t){document.querySelectorAll(".pg").forEach(p=>p.classList.toggle("on",p.id=="p_"+t));document.querySelectorAll("#nav .tab").forEach(b=>b.classList.toggle("on",b.dataset.t==t))}
+(function(){const sel=document.createElement("select");sel.id="tabSel";sel.setAttribute("aria-label","Choose page");sel.innerHTML=TABS.map(t=>'<option value="'+t[0]+'">'+t[1]+'</option>').join("");sel.onchange=()=>tab(sel.value);$("nav").insertBefore(sel,$("nav").children[1])})();
+function tab(t){document.querySelectorAll(".pg").forEach(p=>p.classList.toggle("on",p.id=="p_"+t));document.querySelectorAll("#nav .tab").forEach(b=>b.classList.toggle("on",b.dataset.t==t));const ts=document.getElementById("tabSel");if(ts)ts.value=t}
 
 /* ================= FIREBASE / LOGIN / MONTHS / MOBILE ================= */
 const firebaseConfig={apiKey:"AIzaSyCiqQFsnbSi6eCgUI_W3NTybzIkRmCI_54",authDomain:"tfhs-portal.firebaseapp.com",projectId:"tfhs-portal",storageBucket:"tfhs-portal.firebasestorage.app",messagingSenderId:"316041012204",appId:"1:316041012204:web:04ee8b19374c60f63716c9"};
@@ -617,4 +639,5 @@ function ioUI(adm){const bt="display:block;text-align:center;cursor:pointer;padd
 
 showLogin();
 tab("m");
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}
 </script></body></html>
