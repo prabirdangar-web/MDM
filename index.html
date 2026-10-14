@@ -265,7 +265,7 @@ function calc(){ens();const c=S.cfg,en=S.enrol.reduce((a,r)=>a+r.reduce((x,y)=>x
  D.forEach((o,i)=>{let add=0;while(ri<RC.length&&RC[ri].date<=o.date){add+=+RC[ri].kg;ri++}o.rcv=R(add);ob=R(ob+add);o.ob=ob;o.cb=R(ob-o.rT);ob=o.cb;
   cc+=o.sT;ce+=(+o.exp||0);o.rcb=R(cc-ce)});
  const sum=k=>R(D.reduce((a,o)=>a+(+o[k]||0),0)),T={pV:sum("pV"),pU:sum("pU"),rV:sum("rV"),rU:sum("rU"),rT:sum("rT"),sV:sum("sV"),sU:sum("sU"),sT:sum("sT"),exp:sum("exp"),mat:sum("mat")};
- {const raw=T.sT;T.sV=Math.round(T.sV);T.sT=Math.round(raw);T.sU=T.sT-T.sV}T.days=D.filter(o=>!o.hol).length;T.att=T.days&&en?R(D.reduce((a,o)=>a+o.cpT,0)/(T.days*en)*100):0;T.cb=R(c.ob+c.recv-T.rT);T.rcb=R((+c.obRs||0)+T.sT-T.exp);
+ {const raw=T.sT;T.sV=Math.round(T.sV);T.sT=Math.round(raw);T.sU=T.sT-T.sV}T.days=D.filter(o=>!o.hol&&(o.pV+o.pU)>0).length;T.att=T.days&&en?R(D.reduce((a,o)=>a+o.cpT,0)/(T.days*en)*100):0;T.cb=R(c.ob+c.recv-T.rT);T.rcb=R((+c.obRs||0)+T.sT-T.exp);
  const mt={};MT.forEach(m=>{mt[m[0]]=[R(S.days.filter(d=>!d.hol).reduce((a,d)=>a+(+d.m[m[0]][0]||0),0)),R(S.days.filter(d=>!d.hol).reduce((a,d)=>a+(+d.m[m[0]][1]||0),0))]});
  const E=S.ext,kv={};MT.forEach(m=>kv[m[0]]=[R(mt[m[0]][0]+(+E[m[0]][0]||0)),R(mt[m[0]][1]+(+E[m[0]][1]||0))]);const fuel=[+E.fuel[0]||0,+E.fuel[1]||0];const kTot=R(Object.values(kv).reduce((a,v)=>a+v[1],0)+fuel[1]+(+c.hon||0));
  const claimR=Math.round(T.sT+(+c.hon||0));T.expD=T.exp;T.exp=R(kTot-(+c.hon||0));T.rcb=R((+c.obRs||0)+claimR-kTot);{const sv=D.filter(o=>!o.hol);if(sv.length)sv[sv.length-1].rcb=T.rcb}
