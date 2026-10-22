@@ -253,9 +253,11 @@ const dt=s=>{const d=new Date(s);return d.toLocaleDateString("en-GB",{day:"2-dig
 const save=()=>{dirty=true;uiStatus()};
 const H=(t)=>`<div class="hd"><img src="${LOGO}" alt="MDM"><div><h2>${t}</h2><div>${S.cfg.school} &nbsp;|&nbsp; DISE ${S.cfg.dise} &nbsp;|&nbsp; ${S.cfg.monthName} ${S.cfg.year}</div></div><img src="${LOGO}" alt="MDM" style="visibility:hidden"></div>`;
 function splitV(kg){const e=[1,2,3,4].map(r=>S.enrol[r].reduce((a,x)=>a+(+x||0),0)),wV=e[0]*(+S.cfg.rcV||0.1),wU=(e[1]+e[2]+e[3])*(+S.cfg.rcU||0.15),t=wV+wU;return t?Math.round(kg*wV/t):null}
+const PAYEES=["Shital Chhaya Mahila SHG","Subhadip Chakraborty","Tribhanga Khan","Kishor Ghosh"];
 function ens(){const c=S.cfg;if(c.diff==null)c.diff=5;if(!S.wm)S.wm=clone(WM0);if(c.obRs==null)c.obRs=0;if(!S.rcpt)S.rcpt=[];
  if(!S.syn)S.syn={chk:0,oth:[]};
  if(!S.pay)S.pay=c.ym==="2026-08"?{jal:14812,shgm:600,chk:0,oth:[{l:"RAMPRASAD & Others",a:1500},{l:"SUSHIL",a:1500}]}:{jal:0,shgm:0,chk:0,oth:[]};
+ if(!S.pSeed&&!S.locked){const have=a=>a.map(x=>String(x.l||"").trim().toLowerCase());[S.syn.oth,S.pay.oth].forEach(a=>{const h=have(a);PAYEES.slice().reverse().forEach(n=>{if(h.indexOf(n.toLowerCase())<0)a.unshift({l:n,a:0})})});S.pSeed=1}
  S.rcpt.forEach(r=>{if(r.auto){const v=splitV(+r.kg||0);if(v!==null)r.kgV=v}});
  if(S.rcpt.length){c.recv=R(S.rcpt.reduce((a,r)=>a+(+r.kg||0),0));c.recvV=R(S.rcpt.reduce((a,r)=>a+(+r.kgV||0),0))}}
 function calc(){ens();const c=S.cfg,en=S.enrol.reduce((a,r)=>a+r.reduce((x,y)=>x+y,0),0),D=S.days.map(d0=>{const h=!!d0.hol,d={...d0,pV:h?0:d0.mt[0],pU:h?0:d0.mt[1]+d0.mt[2]+d0.mt[3],exp:h?0:d0.exp};const o={...d};o.hol=h;o.cpT=h?0:d0.cp.reduce((a,x)=>a+x,0);o.att=en?R(o.cpT/en*100):0;
@@ -484,7 +486,7 @@ function newMonth(base,ym,cl){
  B.cfg.ym=ym;B.locked=false;B.lock=null;B.cfg.monthName=MN[m-1];B.cfg.year=m>=4?y+"-"+String(y+1).slice(2):(y-1)+"-"+String(y).slice(2);
  B.cfg.ob=cl?cl.rice:0;B.cfg.obV=cl?cl.riceV:0;B.cfg.obRs=cl?cl.rs:0;B.cfg.recv=0;B.cfg.recvV=0;B.cfg.fuelQ=0;B.cfg.fuelA=0;
  B.days=[...Array(n)].map((_,i)=>{const date=ym+"-"+String(i+1).padStart(2,"0");return{date,cp:[0,0,0,0],mt:[0,0,0,0],exp:0,menu:"",m:blank(),hol:new Date(date+"T00:00:00").getDay()==0}});
- B.ext=blank();B.ext.fuel=[0,0];B.rcpt=[];B.syn={chk:0,oth:[]};B.pay={jal:0,shgm:0,chk:0,oth:[]};if(B.cfg.diff==null)B.cfg.diff=5;Object.keys(B.mdcf).forEach(k=>B.mdcf[k]=k==="done"?"YES":"");B.ifa=0;B.wm=B.wm||clone(WM0);B.days.forEach(d=>{if(!d.hol)d.menu=wmEgg(wmDow(d.date),B.wm[wmDow(d.date)])});return B}
+ B.ext=blank();B.ext.fuel=[0,0];B.rcpt=[];B.syn={chk:0,oth:[]};B.pay={jal:0,shgm:0,chk:0,oth:[]};B.pSeed=0;if(B.cfg.diff==null)B.cfg.diff=5;Object.keys(B.mdcf).forEach(k=>B.mdcf[k]=k==="done"?"YES":"");B.ifa=0;B.wm=B.wm||clone(WM0);B.days.forEach(d=>{if(!d.hol)d.menu=wmEgg(wmDow(d.date),B.wm[wmDow(d.date)])});return B}
 async function getMonth(ym){const d=await db.collection(COL).doc(ym).get();if(d.exists)return{st:JSON.parse(d.data().json),rev:d.data().rev||0};return ym===DATA.cfg.ym?{st:clone(DATA),rev:0,virtual:true}:null}
 async function openMonth(ym,first){
  if(BUSY)return;BUSY=true;$("sst")&&0;
@@ -604,7 +606,7 @@ async function impXls(inp){if(!isAdm())return;if(typeof XLSX==="undefined"){aler
  const fs=[...inp.files];inp.value="";const items=[],errs=[];
  for(const f of fs){try{const wb=XLSX.read(await f.arrayBuffer(),{type:"array"});const p=legacyPatch(wb,XLSX);items.push({ym:p.ym,patch:p,src:f.name})}catch(e){errs.push(f.name+": "+e.message)}}
  await impReview(items,errs)}
-function fromPatch(p,base){const B=newMonth(base,p.ym,null),c=clone(p.cfg);if(!c.year)delete c.year;Object.assign(B.cfg,c);B.cfg.obRs=0;B.days=clone(p.days);B.ext=clone(p.ext);B.enrol=clone(p.enrol);B.ifa=p.ifa||0;B.pay=clone(p.pay||{jal:0,shgm:0,chk:0,oth:[]});B.syn={chk:0,oth:[]};B.locked=false;B.lock=null;return B}
+function fromPatch(p,base){const B=newMonth(base,p.ym,null),c=clone(p.cfg);if(!c.year)delete c.year;Object.assign(B.cfg,c);B.cfg.obRs=0;B.days=clone(p.days);B.ext=clone(p.ext);B.enrol=clone(p.enrol);B.ifa=p.ifa||0;B.pay=clone(p.pay||{jal:0,shgm:0,chk:0,oth:[]});B.syn={chk:0,oth:[]};B.pSeed=0;B.locked=false;B.lock=null;return B}
 function sumOf(st){const k=S;S=st;try{const C=calc();return{days:C.T.days,meals:C.T.pV+C.T.pU,claim:C.claim,kTot:C.kTot,rice:C.T.cb,rs:C.T.rcb,bad:checks(C).length}}finally{S=k}}
 let IMPQ=[];
 async function impReview(items,errs){
